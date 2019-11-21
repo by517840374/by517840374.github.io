@@ -155,28 +155,27 @@
     <article id="post-面试题库" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/11/20/面试题库/">面试集锦</a>
+    </h1>
+  
+
+        
+        <a href="/2019/11/20/面试题库/" class="archive-article-date">
+  	<time datetime="2019-11-20T11:22:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-20</time>
+</a>
+        
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="第一阶段-Python基础"><a href="#第一阶段-Python基础" class="headerlink" title="第一阶段  Python基础"></a>第一阶段  Python基础</h2><ol>
-<li><p>sdf</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> </span><br></pre></td></tr></table></figure>
-
-
-
-</li>
-</ol>
-<h2 id="第二阶段-函数"><a href="#第二阶段-函数" class="headerlink" title="第二阶段 函数"></a>第二阶段 函数</h2><h2 id="第三阶段-面向对象"><a href="#第三阶段-面向对象" class="headerlink" title="第三阶段 面向对象"></a>第三阶段 面向对象</h2><h2 id="第四阶段-高级编程"><a href="#第四阶段-高级编程" class="headerlink" title="第四阶段 高级编程"></a>第四阶段 高级编程</h2><ul>
-<li>模块</li>
-<li>网络</li>
-<li>并发</li>
-</ul>
-<h2 id="第五阶段-数据库"><a href="#第五阶段-数据库" class="headerlink" title="第五阶段 数据库"></a>第五阶段 数据库</h2><h2 id="第六阶段-前端-amp-django"><a href="#第六阶段-前端-amp-django" class="headerlink" title="第六阶段 前端&amp;django"></a>第六阶段 前端&amp;django</h2><h2 id="第七阶段-crm"><a href="#第七阶段-crm" class="headerlink" title="第七阶段 crm"></a>第七阶段 crm</h2><h2 id="第八阶段-drf"><a href="#第八阶段-drf" class="headerlink" title="第八阶段 drf"></a>第八阶段 drf</h2><h2 id="第九阶段-cmdb"><a href="#第九阶段-cmdb" class="headerlink" title="第九阶段 cmdb"></a>第九阶段 cmdb</h2><h2 id="第十阶段-flask"><a href="#第十阶段-flask" class="headerlink" title="第十阶段 flask"></a>第十阶段 flask</h2><h3 id="1-编程语言及他们之间的区别？"><a href="#1-编程语言及他们之间的区别？" class="headerlink" title="1.编程语言及他们之间的区别？"></a>1.编程语言及他们之间的区别？</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">C/C++,很多语言的底层实现都是c，代码执行效率高，自己做内存管理，对代码要求比较高，很多功能需要手动实现。</span><br><span class="line">Java，比较好的编程语言，很多企业级应用都会选择java。</span><br><span class="line">C#，是微软开始的编程语言，部署是需要放在window server上，最大弊端是window系统花钱</span><br><span class="line">PHP,一般用于快速搭建网站,漏洞也比较多</span><br><span class="line">Python，简洁且入门简单，很少的代码就可以做很多事情。</span><br><span class="line">Golang，语法和c比较接近，处理并发时比较有优势 + docker</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-构造函数和析构函数"><a href="#2-构造函数和析构函数" class="headerlink" title="2.构造函数和析构函数"></a>2.构造函数和析构函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">** 构造函数，用于创建对象的函数</span><br><span class="line">** 析构函数，用于销毁对象的函数</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__new__</span><span class="params">(self, *args, **kwargs)</span>:</span> <span class="comment"># 构造函数</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__del__</span><span class="params">(self, *args, **kwargs)</span>:</span> <span class="comment"># 析构函数</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">obj = Foo()</span><br><span class="line"><span class="keyword">del</span> obj</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-重写和重载的区别"><a href="#3-重写和重载的区别" class="headerlink" title="3.重写和重载的区别"></a>3.重写和重载的区别</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">** 重载</span><br><span class="line">class Foo(object):</span><br><span class="line">	def f1(self, int a1):</span><br><span class="line">		return 123</span><br><span class="line">	</span><br><span class="line">	def f1(self, int a1, float a2):</span><br><span class="line">		return 345</span><br><span class="line"></span><br><span class="line">重载，函数名相同而参数类型/个数/返回值不同。</span><br><span class="line"></span><br><span class="line">** 重写</span><br><span class="line">class Foo(object):</span><br><span class="line">	def f1(self):</span><br><span class="line">		print(123)</span><br><span class="line"></span><br><span class="line">class Bar(Foo):</span><br><span class="line">	def f1(self):</span><br><span class="line">		print(666)</span><br><span class="line">		</span><br><span class="line">重写，在子类中对父类中的方法进行重写</span><br></pre></td></tr></table></figure>
-
-<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2>
+        <p>本人总结的一些python面试题，希望你可以获得收获！</p>
+        
+          <a class="article-more-a" href="/2019/11/20/面试题库/#more">more >></a>
+        
       
 
       
@@ -184,6 +183,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">技术，随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -531,6 +541,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">技术，随笔</a>
               </li>
             
             <div class="clearfix"></div>
