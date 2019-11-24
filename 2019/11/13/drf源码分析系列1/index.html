@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>drf源码分析第八说 -- Jwt认证 | github-blogs</title>
+  <title>drf源码分析第一说--restful规范 | github-blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="源码解析 – Jwt">
-<meta name="keywords" content="python,drf,django">
+  <meta name="description" content="restful是一套规则，用于程序之间数据交换的约定。">
+<meta name="keywords" content="python,drf">
 <meta property="og:type" content="article">
-<meta property="og:title" content="drf源码分析第八说 -- Jwt认证">
-<meta property="og:url" content="http://yoursite.com/2019/11/26/drf源码分析第八说----Jwt认证/index.html">
+<meta property="og:title" content="drf源码分析第一说--restful规范">
+<meta property="og:url" content="http://yoursite.com/2019/11/13/drf源码分析系列1/index.html">
 <meta property="og:site_name" content="github-blogs">
-<meta property="og:description" content="源码解析 – Jwt">
+<meta property="og:description" content="restful是一套规则，用于程序之间数据交换的约定。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-24T09:26:25.933Z">
+<meta property="og:updated_time" content="2019-11-24T09:44:48.869Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="drf源码分析第八说 -- Jwt认证">
-<meta name="twitter:description" content="源码解析 – Jwt">
+<meta name="twitter:title" content="drf源码分析第一说--restful规范">
+<meta name="twitter:description" content="restful是一套规则，用于程序之间数据交换的约定。">
   
     <link rel="alternative" href="/atom.xml" title="github-blogs" type="application/atom+xml">
   
@@ -153,20 +153,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-drf源码分析第八说----Jwt认证" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-drf源码分析系列1" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      drf源码分析第八说 -- Jwt认证
+      drf源码分析第一说--restful规范
     </h1>
   
 
         
-        <a href="/2019/11/26/drf源码分析第八说----Jwt认证/" class="archive-article-date">
-  	<time datetime="2019-11-26T12:33:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-26</time>
+        <a href="/2019/11/13/drf源码分析系列1/" class="archive-article-date">
+  	<time datetime="2019-11-13T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-13</time>
 </a>
         <!-- 开始添加字数统计 -->
 		
@@ -196,65 +196,108 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><strong>源码解析 – Jwt</strong></p>
+        <p>restful是一套规则，用于程序之间数据交换的约定。</p>
 <a id="more"></a>
 
-<h3 id="0x01-简介"><a href="#0x01-简介" class="headerlink" title="0x01 简介"></a>0x01 简介</h3><blockquote>
-<p>jwt，json web token，应用于前后端分离项目中，生成一个特殊的加密字符串，不可修改</p>
+<h3 id="RESTful发展背景及简介"><a href="#RESTful发展背景及简介" class="headerlink" title="RESTful发展背景及简介"></a>RESTful发展背景及简介</h3><blockquote>
+<p><strong>百度百科</strong>:RESTFUL是一种网络应用程序的设计风格和开发方式，基于<a href="https://baike.baidu.com/item/HTTP/243074" target="_blank" rel="noopener">HTTP</a>，可以使用<a href="https://baike.baidu.com/item/XML/86251" target="_blank" rel="noopener">XML</a>格式定义或<a href="https://baike.baidu.com/item/JSON/2462549" target="_blank" rel="noopener">JSON</a>格式定义。RESTFUL适用于移动互联网厂商作为业务使能接口的场景，实现第三方<a href="https://baike.baidu.com/item/OTT/9960940" target="_blank" rel="noopener">OTT</a>调用移动网络资源的功能，动作类型为新增、变更、删除所调用资源。</p>
+<p><strong>原则条件：</strong>REST指的是一组架构约束条件和原则。满足这些约束条件和原则的应用程序或设计就是RESTful</p>
+<p>总的来说，restful就是一套规则，用于程序之间进行数据交换的约定。他规定了一些协议，对我们感受最深最直接的是，以前写增删改查需要写四个接口，restful规范的就是<strong>1</strong>个接口，根据method的不同做不同的操作，除此之外，restful规范还规定了下面几个规则。</p>
 </blockquote>
-<p>也许有人说了，为什么要用jwt呢？cookie和session不香吗？他们难道不好吗？</p>
-<p>cookie和session是存储在浏览器客户端或者服务器端的一个键值对，大部分是加密过的，而且在django中有一个专门的session中间件，将session保存在数据库，经过一些加密等方式，形成了一长串密文，里面还有过期时间，我也忘了里面的session是否可以更改过期时间，总之就是不那么安全，虽然说django中session会为每个用户开辟一块空间，但是，别人破解了mysql数据库，session会被别人拿到，拿到session就相当于拿到了账号和密码，用户也就没什么隐私了，具体session的加密方式我也没细细了解。jwt就不一样了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用于在前后端分离时,实现用户登录相关.</span><br></pre></td></tr></table></figure>
-
-<p>一般用户认证有2种方式:</p>
+<h3 id="1-建议用https代替http"><a href="#1-建议用https代替http" class="headerlink" title="1. 建议用https代替http"></a>1. 建议用https代替http</h3><ul>
+<li>用来保证数据的安全</li>
+</ul>
+<h3 id="2-API标识"><a href="#2-API标识" class="headerlink" title="2. API标识"></a>2. API标识</h3><p>在URI中体现api，添加api标识，从而让人一眼知道这是一个接口。接口的表现方式有两种：</p>
 <ul>
-<li><p>token</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">用户登录成功之后，生成一个随机字符串，自己保留一分+给前端返回一份。</span><br><span class="line"></span><br><span class="line">以后前端再来发请求时，需要携带字符串。</span><br><span class="line">后端对字符串进行校验。</span><br></pre></td></tr></table></figure>
+<li><a href="https://www.csdn.com/api/v1/10239423.html" target="_blank" rel="noopener">https://www.csdn.com/api/v1/10239423.html</a></li>
+<li><a href="https://api.csdn.com/v1/10239423.html" target="_blank" rel="noopener">https://api.csdn.com/v1/10239423.html</a></li>
+</ul>
+<p>虽然说有这么两种方式，但是建议使用第一种，因为第二种的链接可能造成跨域问题，至于如何解决跨域问题，这儿就不说了。</p>
+<h3 id="3-版本"><a href="#3-版本" class="headerlink" title="3. 版本"></a>3. 版本</h3><p>在URL中要体现版本，通过版本实现不同的页面展示</p>
+<ul>
+<li><p><a href="https://www.baidu.com/api/v1/restful/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/restful/</a></p>
 </li>
-<li><p>jwt</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">用户登录成功之后，生成一个随机字符串，给前端。</span><br><span class="line">	- 生成随机字符串</span><br><span class="line">		&#123;typ:&quot;jwt&quot;,&quot;alg&quot;:&apos;HS256&apos;&#125;     &#123;id:1,username:&apos;alx&apos;,&apos;exp&apos;:10&#125;</span><br><span class="line">		98qow39df0lj980945lkdjflo.saueoja8979284sdfsdf.asiuokjd978928374</span><br><span class="line">		- 类型信息通过base64加密</span><br><span class="line">		- 数据通过base64加密</span><br><span class="line">		- 两个密文拼接在h256加密+加盐</span><br><span class="line">	- 给前端返回</span><br><span class="line">		98qow39df0lj980945lkdjflo.saueoja8979284sdfsdf.asiuokjd978928375</span><br><span class="line"></span><br><span class="line">前端获取随机字符串之后，保留起来。</span><br><span class="line">以后再来发送请求时，携带98qow39df0lj980945lkdjflo.saueoja8979284sdfsdf.asiuokjd978928375。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">后端接受到之后，</span><br><span class="line">	1.先做时间判断</span><br><span class="line">    2.字符串合法性校验。</span><br></pre></td></tr></table></figure>
+<li><p><a href="https://www.baidu.com/api/v2/restful/" target="_blank" rel="noopener">https://www.baidu.com/api/v2/restful/</a></p>
+<p>注意：版本还可以放在请求头中</p>
+<ul>
+<li><a href="https://www.baidu.com/api/" target="_blank" rel="noopener">https://www.baidu.com/api/</a></li>
+<li>accept: …</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-API接口尽量用名词，不用动词"><a href="#4-API接口尽量用名词，不用动词" class="headerlink" title="4. API接口尽量用名词，不用动词"></a>4. API接口尽量用名词，不用动词</h3><p>restful也称为面向资源编程，视网络上的一切都是资源，对资源可以进行操作，所有一般资源都用名词</p>
+<ul>
+<li><a href="https://www.baidu.com/api/v1/play/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/play/</a>  错</li>
+<li><a href="https://www.baidu.com/api/v1/article/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/article/</a>  对</li>
+</ul>
+<h3 id="5-避免层级过深的URl"><a href="#5-避免层级过深的URl" class="headerlink" title="5. 避免层级过深的URl"></a>5. 避免层级过深的URl</h3><p>/在url中表达层级，用于按实体关联关系进行对象导航，一般根据id导航。</p>
+<p>过深的导航容易导致url膨胀，不易维护，如 GET /zoos/1/areas/3/animals/4，尽量使用查询参数代替路径中的实体导航，如GET /animals?zoo=1&amp;area=3；</p>
+<h3 id="6-根据method不同做不同操作"><a href="#6-根据method不同做不同操作" class="headerlink" title="6. 根据method不同做不同操作"></a>6. 根据method不同做不同操作</h3><p>通过标准HTTP方法对自由CURD:</p>
+<ul>
+<li><p>GET: 查询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET /zoos</span><br><span class="line">GET /zoos/1</span><br><span class="line">GET /zoos/1/employees</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>POST：提交，创建</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /animals  //新增动物</span><br><span class="line">POST /zoos/1/employees //为id为1的动物园雇佣员工</span><br></pre></td></tr></table></figure>
+
+<p>通过POST请求时Content-Type类型的不同，发送的数据也不同</p>
+<p>推荐使用postman工具进行请求发送</p>
+<ol>
+<li><p>Content-Type: application/json</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">POST /v1/animal HTTP/1.1</span><br><span class="line">Host: example.org/api/</span><br><span class="line">Accept: application/json</span><br><span class="line">Content-Type: application/json</span><br><span class="line">Content-Length: 24</span><br><span class="line"> </span><br><span class="line">&#123;   </span><br><span class="line">  &quot;name&quot;: &quot;Gir&quot;,</span><br><span class="line">  &quot;animalType&quot;: &quot;12&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Content-Type: application/x-www-form-urlencoded(浏览器POST表单用的格式)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST /login HTTP/1.1</span><br><span class="line">Host: example.com/api/</span><br><span class="line">Content-Length: 31</span><br><span class="line">Accept: text/html</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line"> </span><br><span class="line">username=root&amp;password=Zion0101</span><br></pre></td></tr></table></figure>
+
+<p>Content-Type发送的不同，后端接收方式也不同</p>
+<p>基于django–第一种接收时，后端通过request.body接收，</p>
+<p>第二种接收时，后端通过request.POST.get(“xx”)接收数据</p>
+</li>
+</ol>
+</li>
+<li><p>PUT：更新单个资源（全量），客户端提供完整的更新后的资源。与之对应的是 PATCH，PATCH 负责部分更新，客户端提供要更新的那些字段。PUT/PATCH一般向“单个资源”型uri发起</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PUT /animals/1</span><br><span class="line">PUT /zoos/1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>PATCH：更新部分资源</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATCH /zoos/1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>DELETE: 删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE /zoos/1/employees/2</span><br></pre></td></tr></table></figure>
 
 </li>
 </ul>
-<p><strong>安装</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install djangorestframework-jwt</span><br></pre></td></tr></table></figure>
-
-<p><strong>使用</strong></p>
-<ul>
-<li><p>app中注册</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">INSTALLED_APPS = [</span><br><span class="line">    &apos;django.contrib.admin&apos;,</span><br><span class="line">    &apos;django.contrib.auth&apos;,</span><br><span class="line">    &apos;django.contrib.contenttypes&apos;,</span><br><span class="line">    &apos;django.contrib.sessions&apos;,</span><br><span class="line">    &apos;django.contrib.messages&apos;,</span><br><span class="line">    &apos;django.contrib.staticfiles&apos;,</span><br><span class="line">    &apos;api.apps.ApiConfig&apos;,</span><br><span class="line">    &apos;rest_framework&apos;,</span><br><span class="line">    &apos;rest_framework_jwt&apos;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h3 id="7-返回给用户状态码"><a href="#7-返回给用户状态码" class="headerlink" title="7. 返回给用户状态码"></a>7. 返回给用户状态码</h3><ul>
+<li><p>200，成功</p>
 </li>
-<li><p>用户登录</p>
+<li><p>300， 301永久重定向，302 临时重定向</p>
+</li>
+<li><p>400，403 拒绝访问， 404 not found 找不到</p>
+</li>
+<li><p>500，服务端代码错误</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 服务端代码错误示例</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">    result = &#123;<span class="string">'code'</span>: <span class="number">1000</span>,<span class="string">'data'</span>:<span class="literal">None</span>, <span class="string">'error'</span>: <span class="literal">None</span>&#125;</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        val = int(<span class="string">'你好(用户输入)'</span>)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        result[<span class="string">'code'</span>] = <span class="number">1001</span></span><br><span class="line">        result[<span class="string">'error'</span>] = <span class="string">'数据转换错误'</span></span><br><span class="line">    <span class="keyword">return</span> Response(result)</span><br></pre></td></tr></table></figure>
+
 </li>
 </ul>
-<h3 id="0x02-jwt认证示例"><a href="#0x02-jwt认证示例" class="headerlink" title="0x02 jwt认证示例"></a>0x02 jwt认证示例</h3><blockquote>
-<p>settings.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">INSTALLED_APPS = [</span><br><span class="line">    <span class="string">'django.contrib.admin'</span>,</span><br><span class="line">    <span class="string">'django.contrib.auth'</span>,</span><br><span class="line">    <span class="string">'django.contrib.contenttypes'</span>,</span><br><span class="line">    <span class="string">'django.contrib.sessions'</span>,</span><br><span class="line">    <span class="string">'django.contrib.messages'</span>,</span><br><span class="line">    <span class="string">'django.contrib.staticfiles'</span>,</span><br><span class="line">    <span class="string">'api.apps.ApiConfig'</span>,</span><br><span class="line">    <span class="comment"># drf</span></span><br><span class="line">    <span class="string">'rest_framework'</span>,</span><br><span class="line">    <span class="comment"># jwt</span></span><br><span class="line">    <span class="string">'rest_framework_jwt'</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">REST_FRAMEWORK = &#123;</span><br><span class="line">    <span class="string">"PAGE_SIZE"</span>:<span class="number">2</span>,</span><br><span class="line">    <span class="string">"DEFAULT_PAGINATION_CLASS"</span>:<span class="string">"rest_framework.pagination.PageNumberPagination"</span>,</span><br><span class="line">    <span class="string">'DEFAULT_VERSIONING_CLASS'</span>:<span class="string">"rest_framework.versioning.URLPathVersioning"</span>,</span><br><span class="line">    <span class="string">"ALLOWED_VERSIONS"</span>:[<span class="string">'v1'</span>,],</span><br><span class="line">    <span class="comment"># 'DEFAULT_AUTHENTICATION_CLASSES':['api.extension.auth.LuffyAuthentication',],</span></span><br><span class="line">    <span class="string">"DEFAULT_THROTTLE_RATES"</span>:&#123;</span><br><span class="line">        <span class="string">"anon"</span>:<span class="string">"3/m"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment"># "UNAUTHENTICATED_USER":None,</span></span><br><span class="line">    <span class="comment"># "UNAUTHENTICATED_TOKEN":None,</span></span><br><span class="line">    <span class="string">"DEFAULT_AUTHENTICATION_CLASSES"</span>:[<span class="string">"api.extends.auth.HulaQueryParamAuthentication"</span>,],</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">JWT_AUTH = &#123;</span><br><span class="line">    <span class="string">"JWT_EXPIRATION_DELTA"</span>:datetime.timedelta(minutes=<span class="number">10</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>api.extends.auth.HulaQueryParamAuthentication(api文件下面的extends的文件的auth.py文件)</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jwt</span><br><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> exceptions</span><br><span class="line"><span class="keyword">from</span> rest_framework.authentication <span class="keyword">import</span> BaseAuthentication</span><br><span class="line"><span class="keyword">from</span> rest_framework_jwt.settings <span class="keyword">import</span> api_settings</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HulaQueryParamAuthentication</span><span class="params">(BaseAuthentication)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">authenticate</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        # raise Exception(), 不在继续往下执行，直接返回给用户。</span></span><br><span class="line"><span class="string">        # return None ,本次认证完成，执行下一个认证</span></span><br><span class="line"><span class="string">        # return ('x',"x")，认证成功，不需要再继续执行其他认证了，继续往后权限、节流、视图函数</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        token = request.query_params.get(<span class="string">'token'</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> token:</span><br><span class="line">            <span class="keyword">raise</span> exceptions.AuthenticationFailed(&#123;<span class="string">'code'</span>:<span class="number">10002</span>,<span class="string">'error'</span>:<span class="string">"登录成功之后才能操作"</span>&#125;)</span><br><span class="line"></span><br><span class="line">        jwt_decode_handler = api_settings.JWT_DECODE_HANDLER</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            payload = jwt_decode_handler(token)</span><br><span class="line">        <span class="keyword">except</span> jwt.ExpiredSignature:</span><br><span class="line">            <span class="keyword">raise</span> exceptions.AuthenticationFailed(&#123;<span class="string">'code'</span>:<span class="number">10003</span>,<span class="string">'error'</span>:<span class="string">"token已过期"</span>&#125;)</span><br><span class="line">        <span class="keyword">except</span> jwt.DecodeError:</span><br><span class="line">            <span class="keyword">raise</span> exceptions.AuthenticationFailed(&#123;<span class="string">'code'</span>:<span class="number">10004</span>,<span class="string">'error'</span>:<span class="string">"token格式错误"</span>&#125;)</span><br><span class="line">        <span class="keyword">except</span> jwt.InvalidTokenError:</span><br><span class="line">            <span class="keyword">raise</span> exceptions.AuthenticationFailed(&#123;<span class="string">'code'</span>:<span class="number">10005</span>,<span class="string">'error'</span>:<span class="string">"认证失败"</span>&#125;)</span><br><span class="line"></span><br><span class="line">        jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER</span><br><span class="line">        username = jwt_get_username_from_payload(payload)</span><br><span class="line">        user_object = models.UserInfo.objects.filter(username=username).first()</span><br><span class="line">        <span class="keyword">return</span> (user_object, token)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>urls.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url,include</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^api/(?P&lt;version&gt;\w+)/'</span>, include(<span class="string">'api.urls'</span>,namespace=<span class="string">'api'</span>)),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># api.urls</span></span><br><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^category/$'</span>, views.CategoryView.as_view()),</span><br><span class="line">    url(<span class="string">r'^login/$'</span>, views.LoginView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>models.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserInfo</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    <span class="string">"""用户表"""</span></span><br><span class="line">    username = models.CharField(verbose_name=<span class="string">'用户名'</span>,max_length=<span class="number">32</span>)</span><br><span class="line">    password = models.CharField(verbose_name=<span class="string">'密码'</span>,max_length=<span class="number">64</span>)</span><br><span class="line">    token = models.CharField(verbose_name=<span class="string">'认证随机字符串'</span>, max_length=<span class="number">64</span>, null=<span class="literal">True</span>, blank=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Category</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    name = models.CharField(verbose_name=<span class="string">"分类"</span>, max_length=<span class="number">16</span>)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>views.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> rest_framework.permissions <span class="keyword">import</span> BasePermission</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> rest_framework_jwt.settings <span class="keyword">import</span> api_settings</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    authentication_classes = []</span><br><span class="line">    permission_classes = []</span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    登录接口</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        user = models.UserInfo.objects.filter(username=request.data.get(<span class="string">'username'</span>),</span><br><span class="line">                                              password=request.data.get(<span class="string">'password'</span>)).first()</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> user:</span><br><span class="line">            <span class="keyword">return</span> Response(&#123;<span class="string">'code'</span>: <span class="number">10001</span>, <span class="string">'error'</span>: <span class="string">'用户名或密码错误'</span>&#125;)</span><br><span class="line"></span><br><span class="line">        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER</span><br><span class="line">        payload = jwt_payload_handler(user)</span><br><span class="line"></span><br><span class="line">        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER</span><br><span class="line">        token = jwt_encode_handler(payload)</span><br><span class="line">        print(token)</span><br><span class="line">        <span class="keyword">return</span> Response(&#123;<span class="string">'code'</span>: <span class="number">10000</span>, <span class="string">'data'</span>: token&#125;)</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CategoryView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        print(request.user)</span><br><span class="line">        print(request.auth)</span><br><span class="line">        data = models.Category.objects.all().values()</span><br><span class="line">        <span class="keyword">return</span> Response(data)</span><br></pre></td></tr></table></figure>
-
-<p>发送请求</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">请求http://127.0.0.1:8000/api/v1/category/</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;code&quot;: &quot;10002&quot;,</span><br><span class="line">    &quot;error&quot;: &quot;登录成功之后才能操作&quot;</span><br><span class="line">&#125;</span><br><span class="line">请求http://127.0.0.1:8000/api/v1/login/ -- post请求</span><br><span class="line">获取token</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;code&quot;: 10000,</span><br><span class="line">    &quot;data&quot;: &quot;eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFhYSIsImV4cCI6MTU3NDU4NzgyOH0.Tf2NEcCgZ63GEZdg14Bcq2HkGxYZzS0CJpRUna2Oud0&quot;</span><br><span class="line">&#125;</span><br><span class="line">请求http://127.0.0.1:8000/api/v1/category/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFhYSIsImV4cCI6MTU3NDU4NzgyOH0.Tf2NEcCgZ63GEZdg14Bcq2HkGxYZzS0CJpRUna2Oud0</span><br><span class="line"></span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;id&quot;: 1,</span><br><span class="line">        &quot;name&quot;: &quot;技术&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;id&quot;: 2,</span><br><span class="line">        &quot;name&quot;: &quot;[&apos;uuid&apos;]&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;id&quot;: 3,</span><br><span class="line">        &quot;name&quot;: &quot;[&apos;“test”&apos;]&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;id&quot;: 4,</span><br><span class="line">        &quot;name&quot;: &quot;[&apos;1122334&apos;]&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;id&quot;: 5,</span><br><span class="line">        &quot;name&quot;: &quot;[&apos;112334&apos;]&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;id&quot;: 6,</span><br><span class="line">        &quot;name&quot;: &quot;[&apos;112334&apos;]&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;id&quot;: 7,</span><br><span class="line">        &quot;name&quot;: &quot;&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;id&quot;: 8,</span><br><span class="line">        &quot;name&quot;: &quot;uucc&quot;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
+<h3 id="8-返回值"><a href="#8-返回值" class="headerlink" title="8. 返回值"></a>8. 返回值</h3><p>GET <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a><br>            [<br>                {‘id’:1,’name’:’admin’,’age’:22},<br>                {‘id’:1,’name’:’admin’,’age’:22},<br>            ]</p>
+<p>POST <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a><br>                {‘id’:1,’name’:’admin’,’age’:22},</p>
+<p>GET <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a></p>
+<p>​                {‘id’:1,’name’:’admin’,’age’:22},</p>
+<p>PUT <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a><br>                {‘id’:1,’name’:’admin’,’age’:22},</p>
+<p>PATCH <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a><br>                {‘id’:1,’name’:’admin’,’age’:22},</p>
+<p>DELETE <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a><br>            空</p>
+<h3 id="9-操作异常时，返回错误信息"><a href="#9-操作异常时，返回错误信息" class="headerlink" title="9. 操作异常时，返回错误信息"></a>9. 操作异常时，返回错误信息</h3><p>​    { error: “Invalid API key” }</p>
+<h3 id="10-对于下一个请求要返回一些接口-Hypermedia-AP"><a href="#10-对于下一个请求要返回一些接口-Hypermedia-AP" class="headerlink" title="10. 对于下一个请求要返回一些接口:Hypermedia AP"></a>10. 对于下一个请求要返回一些接口:Hypermedia AP</h3><p>​    { ‘id’:2, ‘name’:’admin’, ‘age’:91, ‘depart’: <a href="https://www.baidu.com/api/v1/user/2" target="_blank" rel="noopener">https://www.baidu.com/api/v1/user/2</a> }</p>
+<p><strong>小知识点</strong></p>
+<p>restful一般通过json发送数据</p>
+<p>在URL</p>
+<ul>
+<li>不用大写</li>
+<li>用中杠-不用下杠_；</li>
+<li>参数列表要encode；</li>
+<li>URI表示资源的集合，使用复数形式。</li>
+</ul>
+<p><strong>扩展</strong>：前后端分离、app开发、微信小程序和程序之间数据交换</p>
+<p>参考链接:<a href="https://blog.csdn.net/qq_41606973/article/details/86352787" target="_blank" rel="noopener">RESTful API接口设计标准及规范</a></p>
 
       
 
@@ -274,10 +317,6 @@
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">drf</a>
         		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
-        		</li>
       		
 		</ul>
 	</div>
@@ -295,18 +334,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/11/26/drf源码分析第七说----节流/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/11/14/drf源码分析第二说----快速上手drf/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          drf源码分析第七说 -- 节流/频率限制
+          drf源码分析第二说 -- 快速上手drf
         
       </div>
     </a>
   
   
-    <a href="/2019/11/25/drf源码分析第六说----权限/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">drf源码分析第六说 -- 权限</div>
+    <a href="/2019/11/08/呼啦圈项目总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">呼啦圈项目总结草稿</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -437,15 +476,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">drf</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">flask</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">目录</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">drf</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -465,11 +504,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">项目,drf,restful</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目,drf,restful</a>
+                <a href="javascript:void(0)" class="js-tag color1">drf,django</a>
               </li>
             
             <div class="clearfix"></div>

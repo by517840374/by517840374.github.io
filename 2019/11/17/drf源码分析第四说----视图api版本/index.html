@@ -6,16 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>美食 | github-blogs</title>
+  <title>drf源码分析第四说 -- 简单视图流程/api/版本管理 | github-blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="美食">
-<meta property="og:url" content="http://yoursite.com/美食/index.html">
+  <meta name="description" content="简单视图流程/版本管理/API">
+<meta name="keywords" content="python,drf,django">
+<meta property="og:type" content="article">
+<meta property="og:title" content="drf源码分析第四说 -- 简单视图流程&#x2F;api&#x2F;版本管理">
+<meta property="og:url" content="http://yoursite.com/2019/11/17/drf源码分析第四说----视图api版本/index.html">
 <meta property="og:site_name" content="github-blogs">
+<meta property="og:description" content="简单视图流程/版本管理/API">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-22T10:01:43.314Z">
+<meta property="og:updated_time" content="2019-11-24T09:45:25.376Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="美食">
+<meta name="twitter:title" content="drf源码分析第四说 -- 简单视图流程&#x2F;api&#x2F;版本管理">
+<meta name="twitter:description" content="简单视图流程/版本管理/API">
   
     <link rel="alternative" href="/atom.xml" title="github-blogs" type="application/atom+xml">
   
@@ -149,20 +153,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="page-" class="article article-type-page " itemscope itemprop="blogPost">
+            <article id="post-drf源码分析第四说----视图api版本" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      美食
+      drf源码分析第四说 -- 简单视图流程/api/版本管理
     </h1>
   
 
         
-        <a href="/美食/index.html" class="archive-article-date">
-  	<time datetime="2019-11-22T10:01:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
+        <a href="/2019/11/17/drf源码分析第四说----视图api版本/" class="archive-article-date">
+  	<time datetime="2019-11-17T11:58:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-17</time>
 </a>
         <!-- 开始添加字数统计 -->
 		
@@ -171,7 +175,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">0字</span>
+        <span class="post-count">1.7k字</span>
       </span>
     </span>
 
@@ -180,7 +184,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">1分</span>
+        <span class="post-count">8分</span>
       </span>
     </span>
 </div>
@@ -192,7 +196,93 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p><strong>简单视图流程/版本管理/API</strong></p>
+<a id="more"></a>
+
+<h3 id="0x01-API视图请求流程"><a href="#0x01-API视图请求流程" class="headerlink" title="0x01 API视图请求流程"></a>0x01 API视图请求流程</h3><blockquote>
+<p>urls.py</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> app01 <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^article/$'</span>, views.ArticleView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>views.py</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">		data = &#123;<span class="string">'a'</span>:<span class="number">2</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> Response(data)</span><br></pre></td></tr></table></figure>
+
+<p>首先通过路由执行<strong>ArticleView.as_view()</strong>函数，自己类没有，就执行父类，它的父类是<code>View</code></p>
+<p>按住<code>ctrl</code>点击as_view()函数，跳转到了APIView下面的as_view()函数</p>
+<blockquote>
+<p>APIView as_view()</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">APIView</span><span class="params">(View)</span>:</span></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">as_view</span><span class="params">(cls, **initkwargs)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> isinstance(getattr(cls, <span class="string">'queryset'</span>, <span class="literal">None</span>), models.query.QuerySet):</span><br><span class="line">            <span class="function"><span class="keyword">def</span> <span class="title">force_evaluation</span><span class="params">()</span>:</span></span><br><span class="line">                <span class="keyword">raise</span> RuntimeError(</span><br><span class="line">                    <span class="string">'Do not evaluate the `.queryset` attribute directly, '</span></span><br><span class="line">                    <span class="string">'as the result will be cached and reused between requests. '</span></span><br><span class="line">                    <span class="string">'Use `.all()` or call `.get_queryset()` instead.'</span></span><br><span class="line">                )</span><br><span class="line">            cls.queryset._fetch_all = force_evaluation</span><br><span class="line">		**<span class="number">1.</span> 上面就不说了，直接走下面，执行它的父类，也就是View类的的as_view方法，注意，这儿的**initkwargs是没有值的</span><br><span class="line">        view = super().as_view(**initkwargs) **<span class="number">7.</span> view接收到的值就是父类的view函数地址，它就是一个闭包</span><br><span class="line">        view.cls = cls </span><br><span class="line">        view.initkwargs = initkwargs</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> csrf_exempt(view) **<span class="number">8.</span> 然后通过此函数实现view(),过程有点繁杂，过段时间再说</span><br><span class="line">    	**<span class="number">9.</span> 可以先简单的理解成<span class="keyword">return</span> view,csrf_exempt()函数主要是为了去掉csrf的拦截(就像装饰器一样，最后不改变view函数),就把url中的views.Article.as_view() = views.view,类似于Fbv(函数视图),通过django请求生命周期执行了view(),就进入到View类中进行view函数</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>View类中as_view()</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">View</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @classonlymethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">as_view</span><span class="params">(cls, **initkwargs)</span>:</span></span><br><span class="line">        **<span class="number">2.</span> 因为传过来时，initkwargs没有值，所有直接把它<span class="keyword">pass</span>过，看下面的源码</span><br><span class="line">        <span class="keyword">for</span> key <span class="keyword">in</span> initkwargs:</span><br><span class="line">            <span class="keyword">if</span> key <span class="keyword">in</span> cls.http_method_names:</span><br><span class="line">                <span class="keyword">raise</span> TypeError(<span class="string">"You tried to pass in the %s method name as a "</span></span><br><span class="line">                                <span class="string">"keyword argument to %s(). Don't do that."</span></span><br><span class="line">                                % (key, cls.__name__))</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> hasattr(cls, key):</span><br><span class="line">                <span class="keyword">raise</span> TypeError(<span class="string">"%s() received an invalid keyword %r. as_view "</span></span><br><span class="line">                                <span class="string">"only accepts arguments that are already "</span></span><br><span class="line">                                <span class="string">"attributes of the class."</span> % (cls.__name__, key))</span><br><span class="line">		**<span class="number">3.</span> 定义了一个view函数，不调用则不执行，继续向下看</span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">view</span><span class="params">(request, *args, **kwargs)</span>:</span></span><br><span class="line">            **<span class="number">10.</span> 通过一系列复杂的请求，到了这里，进行路由分发</span><br><span class="line">            self = cls(**initkwargs)</span><br><span class="line">            **<span class="number">11.</span> 反射 通过hasattr判断，并进行封装</span><br><span class="line">            <span class="keyword">if</span> hasattr(self, <span class="string">'get'</span>) <span class="keyword">and</span> <span class="keyword">not</span> hasattr(self, <span class="string">'head'</span>):</span><br><span class="line">                self.head = self.get</span><br><span class="line">            self.request = request</span><br><span class="line">            self.args = args</span><br><span class="line">            self.kwargs = kwargs</span><br><span class="line">            **<span class="number">12.</span> 看这儿，返回了dispatch，这儿就用到了类的继承，如果Article有，则优先执行Article类中的dispatch，否则严格按照c3算法执行</span><br><span class="line">            <span class="keyword">return</span> self.dispatch(request, *args, **kwargs)</span><br><span class="line">        view.view_class = cls **<span class="number">4.</span> 这儿就用了一下view的内存地址，给view_class赋值</span><br><span class="line">        view.view_initkwargs = initkwargs **<span class="number">5.</span> 同上赋值</span><br><span class="line"></span><br><span class="line">        update_wrapper(view, cls, updated=()) **<span class="keyword">pass</span></span><br><span class="line">        </span><br><span class="line">        update_wrapper(view, cls.dispatch, assigned=())**<span class="keyword">pass</span></span><br><span class="line">        <span class="keyword">return</span> view **<span class="number">6.</span> 返回一个view函数的函数地址</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>APIView dispatch() APIView有dispatch方法</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">APIView</span><span class="params">(View)</span>:</span></span><br><span class="line">    **<span class="number">13.</span> 先到这儿为止，接下来的权限，认证，节流，版本都会用到dispatch函数，总的来说，这个流程就是类视图的流程。</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dispatch</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        self.args = args</span><br><span class="line">        self.kwargs = kwargs</span><br><span class="line">        request = self.initialize_request(request, *args, **kwargs)</span><br><span class="line">        self.request = request</span><br><span class="line">        self.headers = self.default_response_headers  <span class="comment"># deprecate?</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            self.initial(request, *args, **kwargs)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Get the appropriate handler method</span></span><br><span class="line">            <span class="keyword">if</span> request.method.lower() <span class="keyword">in</span> self.http_method_names:</span><br><span class="line">                handler = getattr(self, request.method.lower(),</span><br><span class="line">                                  self.http_method_not_allowed)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                handler = self.http_method_not_allowed</span><br><span class="line"></span><br><span class="line">            response = handler(request, *args, **kwargs)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> exc:</span><br><span class="line">            response = self.handle_exception(exc)</span><br><span class="line"></span><br><span class="line">        self.response = self.finalize_response(request, response, *args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> self.response</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x02-版本与API–restful规范"><a href="#0x02-版本与API–restful规范" class="headerlink" title="0x02 版本与API–restful规范"></a>0x02 版本与API–restful规范</h3><p>通过上面的流程知道了CBV的执行流程，接下来的版本就是通过它的diapatch()方法进行版本管理</p>
+<blockquote>
+<p>APIView.dispatch()</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">APIView</span><span class="params">(View)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dispatch</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        self.args = args</span><br><span class="line">        self.kwargs = kwargs</span><br><span class="line">        **<span class="number">1.</span> 通过initialize_request方法对当前的request进行封装，通过c3算法寻找initialize_request方法</span><br><span class="line">        **<span class="number">3.</span> 此时的request就是Request()封装之后的实例化对象</span><br><span class="line">        request = self.initialize_request(request, *args, **kwargs)</span><br><span class="line">        self.request = request **<span class="number">4.</span> 添加到本类中，所有self.request._request才是dispatch接收过来的request</span><br><span class="line">        self.headers = self.default_response_headers  **先<span class="keyword">pass</span> <span class="comment"># deprecate?</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            **<span class="number">5.</span> 下面是重点了，不管版本，认证，权限，节流，都会经过这儿，盘它！</span><br><span class="line">            self.initial(request, *args, **kwargs)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Get the appropriate handler method</span></span><br><span class="line">            <span class="keyword">if</span> request.method.lower() <span class="keyword">in</span> self.http_method_names:</span><br><span class="line">                handler = getattr(self, request.method.lower(),</span><br><span class="line">                                  self.http_method_not_allowed)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                handler = self.http_method_not_allowed</span><br><span class="line"></span><br><span class="line">            response = handler(request, *args, **kwargs)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> exc:</span><br><span class="line">            response = self.handle_exception(exc)</span><br><span class="line"></span><br><span class="line">        self.response = self.finalize_response(request, response, *args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> self.response</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>APIView.initialize_request(request, <em>args, *</em>kwargs)</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">APIView</span><span class="params">(View)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initialize_request</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        Returns the initial request object.</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        parser_context = self.get_parser_context(request)</span><br><span class="line">		**<span class="number">2.</span> 返回Request类，进行实例化，返回一个Request()实例化对象,至于self.get_parsers(),self.get_authenticators(),self.get_content_negotiator(),都是通过配置获取到列表，循环实例化，例如：<span class="keyword">return</span> [auth() <span class="keyword">for</span> auth <span class="keyword">in</span> self.authentication_classes] authentication_classes = api_settings.DEFAULT_AUTHENTICATION_CLASSES,认证的时候会执行这一步</span><br><span class="line">        <span class="keyword">return</span> Request(</span><br><span class="line">            request,</span><br><span class="line">            parsers=self.get_parsers(),</span><br><span class="line">            authenticators=self.get_authenticators(),</span><br><span class="line">            negotiator=self.get_content_negotiator(),</span><br><span class="line">            parser_context=parser_context</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>APIView.initial(self, request, <em>args, *</em>kwargs)</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">APIView</span><span class="params">(View)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initial</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        self.format_kwarg = self.get_format_suffix(**kwargs)</span><br><span class="line"></span><br><span class="line">        neg = self.perform_content_negotiation(request)</span><br><span class="line">        request.accepted_renderer, request.accepted_media_type = neg</span><br><span class="line">		**<span class="number">6.</span> 直接到这儿，version是不是版本？版本就是在这儿获取的</span><br><span class="line">        </span><br><span class="line">        **<span class="number">12.</span> 返回这儿的时候，version就是传过来时<span class="string">"version"</span>对应的值,scheme就是URLPathVersioning()对象</span><br><span class="line">        version, scheme = self.determine_version(request, *args, **kwargs)</span><br><span class="line">        </span><br><span class="line">        **<span class="number">13.</span> 然后将version和scheme对应的值封装到request中，通过request调用即可显示</span><br><span class="line">        request.version, request.versioning_scheme = version, scheme</span><br><span class="line"></span><br><span class="line">        self.perform_authentication(request) **认证</span><br><span class="line">        self.check_permissions(request) **权限</span><br><span class="line">        self.check_throttles(request) **节流</span><br><span class="line">        **有没有一种一锅端的感觉，都找到了</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>APIView determine_version()</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">APIView</span><span class="params">(View)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">determine_version</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        </span><br><span class="line">        **<span class="number">7.</span> 这儿就需要你定义versioning_class了，如果已经定义，则按照你定义的走，否则，就会去配置文件找，找不到就会返回<span class="literal">None</span> 这个是APIView通过配置文件找的代码 versioning_class = api_settings.DEFAULT_VERSIONING_CLASS</span><br><span class="line">        <span class="keyword">if</span> self.versioning_class <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> (<span class="literal">None</span>, <span class="literal">None</span>)</span><br><span class="line">        </span><br><span class="line">        **<span class="number">8.</span> 会根据DEFAULT_VERSIONING_CLASS寻找对应的值，例如<span class="string">'DEFAULT_VERSIONING_CLASS'</span>:<span class="string">"rest_framework.versioning.URLPathVersioning"</span>,它加括号就会执行,这儿走的就是URLPathVersioning类中的versioning_class函数</span><br><span class="line">        scheme = self.versioning_class() </span><br><span class="line">        </span><br><span class="line">        **<span class="number">11.</span> scheme.determine_version(request, *args, **kwargs)得到了一个version对应的值或者自己定义的version_param对应的值</span><br><span class="line">        <span class="keyword">return</span> (scheme.determine_version(request, *args, **kwargs), scheme)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>URLPathVersioning versioning_class()</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">URLPathVersioning</span><span class="params">(BaseVersioning)</span>:</span></span><br><span class="line">    </span><br><span class="line">    invalid_version_message = _(<span class="string">'Invalid version in URL path.'</span>)</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">determine_version</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        </span><br><span class="line">        **<span class="number">9.</span> get的用法，有则用第一个，没有则用第二个，第二个默认为<span class="string">"version"</span>，所有version会获得一个默认version后面跟着的值</span><br><span class="line">        version = kwargs.get(self.version_param, self.default_version)</span><br><span class="line">        <span class="keyword">if</span> version <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            version = self.default_version</span><br><span class="line">            </span><br><span class="line">		**<span class="number">10.</span> 判断版本传过来的值是否在is_allowed_version列表中</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.is_allowed_version(version):</span><br><span class="line">            <span class="keyword">raise</span> exceptions.NotFound(self.invalid_version_message)</span><br><span class="line">        <span class="keyword">return</span> version <span class="comment"># return "version"</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-版本示例"><a href="#0x03-版本示例" class="headerlink" title="0x03 版本示例"></a>0x03 版本示例</h3><blockquote>
+<p>settings.py</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">REST_FRAMEWORK  =&#123;</span><br><span class="line">    <span class="string">"PAGE_SIZE"</span>:<span class="number">2</span>, <span class="comment"># 分页</span></span><br><span class="line">    </span><br><span class="line">    <span class="string">'DEFAULT_PAGINATION_CLASS'</span>:<span class="string">"rest_framework.pagination.PageNumberPagination"</span>, <span class="comment"># 分页</span></span><br><span class="line">    </span><br><span class="line">    <span class="string">'DEFAULT_VERSIONING_CLASS'</span>:<span class="string">"rest_framework.versioning.URLPathVersioning"</span>,</span><br><span class="line">    </span><br><span class="line">    <span class="string">"VERSION_PARAM"</span>:<span class="string">"version"</span>, <span class="comment"># 默认就是version，尽量不要修改，规范</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># "ALLOWED_VERSIONS":["v1","v2"], # 允许的版本</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>urls.py</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url,include</span><br><span class="line"><span class="keyword">from</span> app01 <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^api/(?P&lt;version&gt;\w+)/'</span>, include(<span class="string">'app01.urls'</span>,namespace=<span class="string">'app01'</span>)),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># app01.urls.py</span></span><br><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> app01 <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^article/$'</span>, views.ArticleView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>views.py</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        print(request.version)</span><br><span class="line">        print(request.versioning_scheme)</span><br><span class="line">        data = &#123;<span class="string">'a'</span>:<span class="number">1</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> Response(data)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>请求</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1:8000/api/v1/article/</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结果</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">v1</span><br><span class="line">&lt;rest_framework.versioning.URLPathVersioning object at 0x000001361BF41FD0&gt;</span><br></pre></td></tr></table></figure>
+
+<p>喜欢研究源码的哥们儿可以查看drf的源码，对比食用更佳</p>
+<p>继承关系 View主视图</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">A[View] --&gt; B(APIView)</span><br><span class="line">    B --&gt; C(GenericAPIView)</span><br><span class="line">    E[ListModelMixin] --&gt; D(ListAPIView)</span><br><span class="line">    C --&gt; D(ListAPIView)</span><br><span class="line">   </span><br><span class="line">    F[视图流程图]</span><br></pre></td></tr></table></figure>
+
+<p>上面的图显示不出来，可以把这段代码张贴到md文档中，输入```mermaid，下面```闭合，把代码放进去就可以看到了。</p>
+
       
 
       
@@ -200,6 +290,25 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">drf</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -211,6 +320,25 @@
 </article>
 
   
+<nav id="article-nav">
+  
+    <a href="/2019/11/17/drf源码分析第五说 -- 认证/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          drf源码分析第五说 -- 认证
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/11/16/drf源码分析第三说 -- 分页/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">drf源码分析第三说 -- 分页</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -261,7 +389,7 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,

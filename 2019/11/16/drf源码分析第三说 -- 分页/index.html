@@ -6,20 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>drf源码分析第一说--restful规范 | github-blogs</title>
+  <title>drf源码分析第三说 -- 分页 | github-blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="restful是一套规则，用于程序之间数据交换的约定。">
-<meta name="keywords" content="python,drf">
+  <meta name="description" content="drf分页">
+<meta name="keywords" content="python,drf,django">
 <meta property="og:type" content="article">
-<meta property="og:title" content="drf源码分析第一说--restful规范">
-<meta property="og:url" content="http://yoursite.com/2019/11/22/drf源码分析系列1/index.html">
+<meta property="og:title" content="drf源码分析第三说 -- 分页">
+<meta property="og:url" content="http://yoursite.com/2019/11/16/drf源码分析第三说 -- 分页/index.html">
 <meta property="og:site_name" content="github-blogs">
-<meta property="og:description" content="restful是一套规则，用于程序之间数据交换的约定。">
+<meta property="og:description" content="drf分页">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-23T08:49:47.725Z">
+<meta property="og:image" content="http://q1cw3e2d5.bkt.clouddn.com/111.png">
+<meta property="og:image" content="http://q1cw3e2d5.bkt.clouddn.com/QQ%E6%88%AA%E5%9B%BE20191123173101.jpg">
+<meta property="og:image" content="http://q1cw3e2d5.bkt.clouddn.com/QQ%E6%88%AA%E5%9B%BE20191123175555.jpg">
+<meta property="og:updated_time" content="2019-11-24T09:45:15.586Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="drf源码分析第一说--restful规范">
-<meta name="twitter:description" content="restful是一套规则，用于程序之间数据交换的约定。">
+<meta name="twitter:title" content="drf源码分析第三说 -- 分页">
+<meta name="twitter:description" content="drf分页">
+<meta name="twitter:image" content="http://q1cw3e2d5.bkt.clouddn.com/111.png">
   
     <link rel="alternative" href="/atom.xml" title="github-blogs" type="application/atom+xml">
   
@@ -153,20 +157,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-drf源码分析系列1" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-drf源码分析第三说 -- 分页" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      drf源码分析第一说--restful规范
+      drf源码分析第三说 -- 分页
     </h1>
   
 
         
-        <a href="/2019/11/22/drf源码分析系列1/" class="archive-article-date">
-  	<time datetime="2019-11-22T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
+        <a href="/2019/11/16/drf源码分析第三说 -- 分页/" class="archive-article-date">
+  	<time datetime="2019-11-16T11:58:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-16</time>
 </a>
         <!-- 开始添加字数统计 -->
 		
@@ -175,7 +179,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">1.2k字</span>
+        <span class="post-count">466字</span>
       </span>
     </span>
 
@@ -184,7 +188,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">5分</span>
+        <span class="post-count">2分</span>
       </span>
     </span>
 </div>
@@ -196,108 +200,29 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>restful是一套规则，用于程序之间数据交换的约定。</p>
+        <p><strong>drf分页</strong></p>
 <a id="more"></a>
 
-<h3 id="RESTful发展背景及简介"><a href="#RESTful发展背景及简介" class="headerlink" title="RESTful发展背景及简介"></a>RESTful发展背景及简介</h3><blockquote>
-<p><strong>百度百科</strong>:RESTFUL是一种网络应用程序的设计风格和开发方式，基于<a href="https://baike.baidu.com/item/HTTP/243074" target="_blank" rel="noopener">HTTP</a>，可以使用<a href="https://baike.baidu.com/item/XML/86251" target="_blank" rel="noopener">XML</a>格式定义或<a href="https://baike.baidu.com/item/JSON/2462549" target="_blank" rel="noopener">JSON</a>格式定义。RESTFUL适用于移动互联网厂商作为业务使能接口的场景，实现第三方<a href="https://baike.baidu.com/item/OTT/9960940" target="_blank" rel="noopener">OTT</a>调用移动网络资源的功能，动作类型为新增、变更、删除所调用资源。</p>
-<p><strong>原则条件：</strong>REST指的是一组架构约束条件和原则。满足这些约束条件和原则的应用程序或设计就是RESTful</p>
-<p>总的来说，restful就是一套规则，用于程序之间进行数据交换的约定。他规定了一些协议，对我们感受最深最直接的是，以前写增删改查需要写四个接口，restful规范的就是<strong>1</strong>个接口，根据method的不同做不同的操作，除此之外，restful规范还规定了下面几个规则。</p>
+<h3 id="0x01-分页"><a href="#0x01-分页" class="headerlink" title="0x01 分页"></a>0x01 分页</h3><p><strong>1. PageNumberPagination</strong></p>
+<blockquote>
+<p>配置settings.py</p>
 </blockquote>
-<h3 id="1-建议用https代替http"><a href="#1-建议用https代替http" class="headerlink" title="1. 建议用https代替http"></a>1. 建议用https代替http</h3><ul>
-<li>用来保证数据的安全</li>
-</ul>
-<h3 id="2-API标识"><a href="#2-API标识" class="headerlink" title="2. API标识"></a>2. API标识</h3><p>在URI中体现api，添加api标识，从而让人一眼知道这是一个接口。接口的表现方式有两种：</p>
-<ul>
-<li><a href="https://www.csdn.com/api/v1/10239423.html" target="_blank" rel="noopener">https://www.csdn.com/api/v1/10239423.html</a></li>
-<li><a href="https://api.csdn.com/v1/10239423.html" target="_blank" rel="noopener">https://api.csdn.com/v1/10239423.html</a></li>
-</ul>
-<p>虽然说有这么两种方式，但是建议使用第一种，因为第二种的链接可能造成跨域问题，至于如何解决跨域问题，这儿就不说了。</p>
-<h3 id="3-版本"><a href="#3-版本" class="headerlink" title="3. 版本"></a>3. 版本</h3><p>在URL中要体现版本，通过版本实现不同的页面展示</p>
-<ul>
-<li><p><a href="https://www.baidu.com/api/v1/restful/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/restful/</a></p>
-</li>
-<li><p><a href="https://www.baidu.com/api/v2/restful/" target="_blank" rel="noopener">https://www.baidu.com/api/v2/restful/</a></p>
-<p>注意：版本还可以放在请求头中</p>
-<ul>
-<li><a href="https://www.baidu.com/api/" target="_blank" rel="noopener">https://www.baidu.com/api/</a></li>
-<li>accept: …</li>
-</ul>
-</li>
-</ul>
-<h3 id="4-API接口尽量用名词，不用动词"><a href="#4-API接口尽量用名词，不用动词" class="headerlink" title="4. API接口尽量用名词，不用动词"></a>4. API接口尽量用名词，不用动词</h3><p>restful也称为面向资源编程，视网络上的一切都是资源，对资源可以进行操作，所有一般资源都用名词</p>
-<ul>
-<li><a href="https://www.baidu.com/api/v1/play/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/play/</a>  错</li>
-<li><a href="https://www.baidu.com/api/v1/article/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/article/</a>  对</li>
-</ul>
-<h3 id="5-避免层级过深的URl"><a href="#5-避免层级过深的URl" class="headerlink" title="5. 避免层级过深的URl"></a>5. 避免层级过深的URl</h3><p>/在url中表达层级，用于按实体关联关系进行对象导航，一般根据id导航。</p>
-<p>过深的导航容易导致url膨胀，不易维护，如 GET /zoos/1/areas/3/animals/4，尽量使用查询参数代替路径中的实体导航，如GET /animals?zoo=1&amp;area=3；</p>
-<h3 id="6-根据method不同做不同操作"><a href="#6-根据method不同做不同操作" class="headerlink" title="6. 根据method不同做不同操作"></a>6. 根据method不同做不同操作</h3><p>通过标准HTTP方法对自由CURD:</p>
-<ul>
-<li><p>GET: 查询</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET /zoos</span><br><span class="line">GET /zoos/1</span><br><span class="line">GET /zoos/1/employees</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>POST：提交，创建</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /animals  //新增动物</span><br><span class="line">POST /zoos/1/employees //为id为1的动物园雇佣员工</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">REST_FRAMEWORK = &#123;</span><br><span class="line">	<span class="string">"PAGE_SIZE"</span>:<span class="number">2</span>,</span><br><span class="line">    <span class="string">'DEFAULT_PAGINATION_CLASS'</span>:<span class="string">"rest_framework.pagination.PageNumberPagination"</span>,</span><br><span class="line">    <span class="comment"># 也可以配置这个，这样就不用在views视图中调用了，源码中会默认从该配置调用</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 显示两页</span></span><br></pre></td></tr></table></figure>
 
-<p>通过POST请求时Content-Type类型的不同，发送的数据也不同</p>
-<p>推荐使用postman工具进行请求发送</p>
-<ol>
-<li><p>Content-Type: application/json</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">POST /v1/animal HTTP/1.1</span><br><span class="line">Host: example.org/api/</span><br><span class="line">Accept: application/json</span><br><span class="line">Content-Type: application/json</span><br><span class="line">Content-Length: 24</span><br><span class="line"> </span><br><span class="line">&#123;   </span><br><span class="line">  &quot;name&quot;: &quot;Gir&quot;,</span><br><span class="line">  &quot;animalType&quot;: &quot;12&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Content-Type: application/x-www-form-urlencoded(浏览器POST表单用的格式)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST /login HTTP/1.1</span><br><span class="line">Host: example.com/api/</span><br><span class="line">Content-Length: 31</span><br><span class="line">Accept: text/html</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line"> </span><br><span class="line">username=root&amp;password=Zion0101</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>配置视图views.py</p>
+</blockquote>
+<h4 id="方式一：仅数据"><a href="#方式一：仅数据" class="headerlink" title="方式一：仅数据"></a>方式一：仅数据</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> app01 <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> app01.forms <span class="keyword">import</span> ArticleSerializer,ConsultationSerializer</span><br><span class="line"><span class="keyword">from</span> django.forms.models <span class="keyword">import</span> model_to_dict</span><br><span class="line"><span class="keyword">from</span> rest_framework.pagination <span class="keyword">import</span> PageNumberPagination</span><br><span class="line"><span class="keyword">from</span> django.db.models <span class="keyword">import</span> Q,F</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> pk:</span><br><span class="line">        	page_object = PageNumberPagination()</span><br><span class="line">            result = page_object.paginate_queryset(queryset, request, self)</span><br><span class="line">            ser = ArticleSerializer(instance=result,many=<span class="literal">True</span>,source=<span class="string">"get_article_display"</span>)</span><br><span class="line">        	<span class="keyword">return</span> Response(ser.data)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            model_object = models.Article.objects.filter(id=pk).first()</span><br><span class="line">            model_object.reader_num += <span class="number">1</span></span><br><span class="line">            model_object.save()</span><br><span class="line">            ser = ArticleSerializer(instance=model_object, many=<span class="literal">False</span>)</span><br><span class="line">            <span class="keyword">return</span> Response(ser.data)</span><br></pre></td></tr></table></figure>
 
-<p>Content-Type发送的不同，后端接收方式也不同</p>
-<p>基于django–第一种接收时，后端通过request.body接收，</p>
-<p>第二种接收时，后端通过request.POST.get(“xx”)接收数据</p>
-</li>
-</ol>
-</li>
-<li><p>PUT：更新单个资源（全量），客户端提供完整的更新后的资源。与之对应的是 PATCH，PATCH 负责部分更新，客户端提供要更新的那些字段。PUT/PATCH一般向“单个资源”型uri发起</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PUT /animals/1</span><br><span class="line">PUT /zoos/1</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>PATCH：更新部分资源</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATCH /zoos/1</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>DELETE: 删除</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE /zoos/1/employees/2</span><br></pre></td></tr></table></figure>
+<h4 id="方式二：数据加分页信息-推荐使用"><a href="#方式二：数据加分页信息-推荐使用" class="headerlink" title="方式二：数据加分页信息(推荐使用)"></a>方式二：数据加分页信息(推荐使用)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app01 <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> app01.forms <span class="keyword">import</span> ArticleSerializer,ConsultationSerializer</span><br><span class="line"><span class="keyword">from</span> django.forms.models <span class="keyword">import</span> model_to_dict</span><br><span class="line"><span class="keyword">from</span> rest_framework.pagination <span class="keyword">import</span> PageNumberPagination</span><br><span class="line"><span class="keyword">from</span> django.db.models <span class="keyword">import</span> Q,F</span><br><span class="line"><span class="keyword">from</span> rest_framework.generics <span class="keyword">import</span> GenericAPIView,ListAPIView</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> pk:</span><br><span class="line">            queryset = models.Article.objects.all()</span><br><span class="line">            page_obj = PageNumberPagination()</span><br><span class="line">            result = page_obj.paginate_queryset(queryset, request, self)</span><br><span class="line">            ser = ArticleSerializer(instance=result, many=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">return</span> page_obj.get_paginated_response(ser.data)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            model_object = models.Article.objects.filter(id=pk).first()</span><br><span class="line">            model_object.reader_num += <span class="number">1</span></span><br><span class="line">            model_object.save()</span><br><span class="line">            ser = ArticleSerializer(instance=model_object, many=<span class="literal">False</span>)</span><br><span class="line">            <span class="keyword">return</span> Response(ser.data)</span><br></pre></td></tr></table></figure>
 
-</li>
-</ul>
-<h3 id="7-返回给用户状态码"><a href="#7-返回给用户状态码" class="headerlink" title="7. 返回给用户状态码"></a>7. 返回给用户状态码</h3><ul>
-<li><p>200，成功</p>
-</li>
-<li><p>300， 301永久重定向，302 临时重定向</p>
-</li>
-<li><p>400，403 拒绝访问， 404 not found 找不到</p>
-</li>
-<li><p>500，服务端代码错误</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 服务端代码错误示例</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">    result = &#123;<span class="string">'code'</span>: <span class="number">1000</span>,<span class="string">'data'</span>:<span class="literal">None</span>, <span class="string">'error'</span>: <span class="literal">None</span>&#125;</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        val = int(<span class="string">'你好(用户输入)'</span>)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        result[<span class="string">'code'</span>] = <span class="number">1001</span></span><br><span class="line">        result[<span class="string">'error'</span>] = <span class="string">'数据转换错误'</span></span><br><span class="line">    <span class="keyword">return</span> Response(result)</span><br></pre></td></tr></table></figure>
+<p><img src="http://q1cw3e2d5.bkt.clouddn.com/111.png" alt="分页详细"></p>
+<h4 id="方式三"><a href="#方式三" class="headerlink" title="方式三"></a>方式三</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app01 <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> app01.forms <span class="keyword">import</span> ArticleSerializer,ConsultationSerializer</span><br><span class="line"><span class="keyword">from</span> django.forms.models <span class="keyword">import</span> model_to_dict</span><br><span class="line"><span class="keyword">from</span> rest_framework.pagination <span class="keyword">import</span> PageNumberPagination</span><br><span class="line"><span class="keyword">from</span> django.db.models <span class="keyword">import</span> Q,F</span><br><span class="line"><span class="keyword">from</span> rest_framework.generics <span class="keyword">import</span> GenericAPIView,ListAPIView</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> pk:</span><br><span class="line">            queryset = models.Article.objects.all()</span><br><span class="line">            page_obj = PageNumberPagination()</span><br><span class="line">            result = page_obj.paginate_queryset(queryset, request, self)</span><br><span class="line">            ser = ArticleSerializer(instance=result, many=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">return</span> Response(&#123;<span class="string">'count'</span>:page_obj.page.paginator.count, <span class="string">'result'</span>:ser.data&#125;)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">            model_object = models.Article.objects.filter(id=pk).first()</span><br><span class="line">            model_object.reader_num += <span class="number">1</span></span><br><span class="line">            model_object.save()</span><br><span class="line">            ser = ArticleSerializer(instance=model_object, many=<span class="literal">False</span>)</span><br><span class="line">            <span class="keyword">return</span> Response(ser.data)</span><br></pre></td></tr></table></figure>
 
-</li>
-</ul>
-<h3 id="8-返回值"><a href="#8-返回值" class="headerlink" title="8. 返回值"></a>8. 返回值</h3><p>GET <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a><br>            [<br>                {‘id’:1,’name’:’admin’,’age’:22},<br>                {‘id’:1,’name’:’admin’,’age’:22},<br>            ]</p>
-<p>POST <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a><br>                {‘id’:1,’name’:’admin’,’age’:22},</p>
-<p>GET <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a></p>
-<p>​                {‘id’:1,’name’:’admin’,’age’:22},</p>
-<p>PUT <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a><br>                {‘id’:1,’name’:’admin’,’age’:22},</p>
-<p>PATCH <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a><br>                {‘id’:1,’name’:’admin’,’age’:22},</p>
-<p>DELETE <a href="https://www.baidu.com/api/v1/userinfo/" target="_blank" rel="noopener">https://www.baidu.com/api/v1/userinfo/</a><br>            空</p>
-<h3 id="9-操作异常时，返回错误信息"><a href="#9-操作异常时，返回错误信息" class="headerlink" title="9. 操作异常时，返回错误信息"></a>9. 操作异常时，返回错误信息</h3><p>​    { error: “Invalid API key” }</p>
-<h3 id="10-对于下一个请求要返回一些接口-Hypermedia-AP"><a href="#10-对于下一个请求要返回一些接口-Hypermedia-AP" class="headerlink" title="10. 对于下一个请求要返回一些接口:Hypermedia AP"></a>10. 对于下一个请求要返回一些接口:Hypermedia AP</h3><p>​    { ‘id’:2, ‘name’:’admin’, ‘age’:91, ‘depart’: <a href="https://www.baidu.com/api/v1/user/2" target="_blank" rel="noopener">https://www.baidu.com/api/v1/user/2</a> }</p>
-<p><strong>小知识点</strong></p>
-<p>restful一般通过json发送数据</p>
-<p>在URL</p>
-<ul>
-<li>不用大写</li>
-<li>用中杠-不用下杠_；</li>
-<li>参数列表要encode；</li>
-<li>URI表示资源的集合，使用复数形式。</li>
-</ul>
-<p><strong>扩展</strong>：前后端分离、app开发、微信小程序和程序之间数据交换</p>
-<p>参考链接:<a href="https://blog.csdn.net/qq_41606973/article/details/86352787" target="_blank" rel="noopener">RESTful API接口设计标准及规范</a></p>
+<p><img src="http://q1cw3e2d5.bkt.clouddn.com/QQ%E6%88%AA%E5%9B%BE20191123173101.jpg" alt></p>
+<h4 id="0x02-LimitOffsetPagination-另一种分页实现"><a href="#0x02-LimitOffsetPagination-另一种分页实现" class="headerlink" title="0x02 LimitOffsetPagination(另一种分页实现)"></a>0x02 LimitOffsetPagination(另一种分页实现)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> app01 <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> rest_framework.pagination <span class="keyword">import</span> LimitOffsetPagination</span><br><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> serializers</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PageArticleSerializer</span><span class="params">(serializers.ModelSerializer)</span>:</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line"></span><br><span class="line">        model = models.Article</span><br><span class="line">        fields = <span class="string">"__all__"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HulaLimitOffsetPagination</span><span class="params">(LimitOffsetPagination)</span>:</span></span><br><span class="line">    max_limit = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PageArticleView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line"></span><br><span class="line">        queryset = models.Article.objects.all()</span><br><span class="line">        page_object = HulaLimitOffsetPagination()</span><br><span class="line">        result = page_object.paginate_queryset(queryset, request, self)</span><br><span class="line">        ser = PageArticleSerializer(instance=result, many=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">return</span> Response(ser.data)</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://q1cw3e2d5.bkt.clouddn.com/QQ%E6%88%AA%E5%9B%BE20191123175555.jpg" alt></p>
 
       
 
@@ -317,6 +242,10 @@
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">drf</a>
         		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
+        		</li>
       		
 		</ul>
 	</div>
@@ -334,18 +263,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/11/22/flask源码分析1/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/11/17/drf源码分析第四说----视图api版本/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          flask剖析第一说--通过werkzurg了解wsgi
+          drf源码分析第四说 -- 简单视图流程/api/版本管理
         
       </div>
     </a>
   
   
-    <a href="/2019/11/22/sqlhelper文件引入单例模式/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">SqlHelper--单例模式</div>
+    <a href="/2019/11/14/drf源码分析第二说----快速上手drf/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">drf源码分析第二说 -- 快速上手drf</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -476,15 +405,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">drf</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">flask</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">目录</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">drf</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -504,11 +433,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">项目,drf,restful</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">项目,drf,restful</a>
+                <a href="javascript:void(0)" class="js-tag color1">drf,django</a>
               </li>
             
             <div class="clearfix"></div>
