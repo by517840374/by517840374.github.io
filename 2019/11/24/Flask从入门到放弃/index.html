@@ -6,23 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>git工具的使用 | github-blogs</title>
+  <title>Flask从入门到放弃 | github-blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="协同开发软件git">
-<meta name="keywords" content="技术">
+  <meta name="description" content="Flask系列总结目录阅览">
+<meta name="keywords" content="python,flask,目录">
 <meta property="og:type" content="article">
-<meta property="og:title" content="git工具的使用">
-<meta property="og:url" content="http://yoursite.com/2019/11/22/git/index.html">
+<meta property="og:title" content="Flask从入门到放弃">
+<meta property="og:url" content="http://yoursite.com/2019/11/24/Flask从入门到放弃/index.html">
 <meta property="og:site_name" content="github-blogs">
-<meta property="og:description" content="协同开发软件git">
+<meta property="og:description" content="Flask系列总结目录阅览">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://yoursite.com/2019/11/22/git/img/1562137676568.png">
-<meta property="og:image" content="http://q1cw3e2d5.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720191112154020.jpg">
-<meta property="og:updated_time" content="2019-11-22T11:42:42.411Z">
+<meta property="og:updated_time" content="2019-11-23T05:08:22.406Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="git工具的使用">
-<meta name="twitter:description" content="协同开发软件git">
-<meta name="twitter:image" content="http://yoursite.com/2019/11/22/git/img/1562137676568.png">
+<meta name="twitter:title" content="Flask从入门到放弃">
+<meta name="twitter:description" content="Flask系列总结目录阅览">
   
     <link rel="alternative" href="/atom.xml" title="github-blogs" type="application/atom+xml">
   
@@ -156,20 +153,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-git" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Flask从入门到放弃" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      git工具的使用
+      Flask从入门到放弃
     </h1>
   
 
         
-        <a href="/2019/11/22/git/" class="archive-article-date">
-  	<time datetime="2019-11-22T10:00:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
+        <a href="/2019/11/24/Flask从入门到放弃/" class="archive-article-date">
+  	<time datetime="2019-11-24T11:22:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-24</time>
 </a>
         <!-- 开始添加字数统计 -->
 		
@@ -178,7 +175,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">1.4k字</span>
+        <span class="post-count">117字</span>
       </span>
     </span>
 
@@ -187,7 +184,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">5分</span>
+        <span class="post-count">1分</span>
       </span>
     </span>
 </div>
@@ -199,103 +196,16 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>协同开发软件git</p>
-</blockquote>
+        <p>Flask系列总结目录阅览</p>
 <a id="more"></a>
 
-<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>软件，帮助我们做版本控制</p>
-<p>如果你是windows用户，需要下载一个git应用程序，一路点就行，没有什么需要注意的地方 </p>
-<p>安装完成后在任一文件夹内右键都有显示，单击git bash here即可</p>
-<p><img src="img/1562137676568.png" alt="1562137676568"></p>
-<h3 id="简易的命令行入门教程"><a href="#简易的命令行入门教程" class="headerlink" title="简易的命令行入门教程:"></a>简易的命令行入门教程:</h3><h4 id="Git-全局设置"><a href="#Git-全局设置" class="headerlink" title="Git 全局设置:"></a>Git 全局设置:</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --<span class="keyword">global</span> user.name <span class="string">"name"</span>  <span class="comment"># 上传者的用户名</span></span><br><span class="line">git config --<span class="keyword">global</span> user.email <span class="string">"you@email.com"</span> <span class="comment"># 上传者的邮箱 配置一次即可，后面无需配置 这样就知道是谁上传的</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="创建-git-仓库"><a href="#创建-git-仓库" class="headerlink" title="创建 git 仓库:"></a>创建 git 仓库:</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mkdir git	<span class="comment"># 创建一个git文件夹</span></span><br><span class="line">cd git	  <span class="comment"># 切换到git文件夹</span></span><br><span class="line">git init  <span class="comment"># 初始化仓库</span></span><br><span class="line">touch README.md   <span class="comment"># 创建一个README文档(可建可不建)</span></span><br><span class="line">git add README.md   <span class="comment"># 将README.md添加到暂时缓存区中</span></span><br><span class="line">git status  <span class="comment"># 查看暂时缓存区的文件，查看是否选上</span></span><br><span class="line">git commit -m <span class="string">"first commit"</span>  <span class="comment"># 给这个上传过程添加注释，简要说明上传的原因 也可以输入git log 查看之前上传的日志</span></span><br><span class="line">git remote add origin https://gitee.com/test/git.git  <span class="comment"># 将你码云仓库的网址用origin代替</span></span><br><span class="line">git push -u origin master  <span class="comment"># 推送上去 这个步骤是将本地的上传到远程码云仓库中，第一会提示输入密码</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="第二次及以后上传"><a href="#第二次及以后上传" class="headerlink" title="第二次及以后上传"></a>第二次及以后上传</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">在之前上传过的目录上传，只需要输入<span class="number">3</span>个命令</span><br><span class="line"><span class="number">1.</span> git add . 或 git add test.txt </span><br><span class="line"><span class="comment"># 第一个是把全部文件添加到暂时缓存区，即上传全部，第二个就是单个上传</span></span><br><span class="line"><span class="number">2.</span> git commit -m <span class="string">"Third upload"</span></span><br><span class="line"><span class="comment"># 添加简要说明</span></span><br><span class="line"><span class="number">3.</span> git push -u origin master</span><br><span class="line"><span class="comment"># 将需要上传的文件传输上去</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="进阶功能"><a href="#进阶功能" class="headerlink" title="进阶功能"></a>进阶功能</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>git status 即时查看状态</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>git log 查看日志</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>git reset --hard (git 查看到的commit id)</span><br><span class="line">  git reset --hard <span class="number">0</span>b3720b5ba291318e0da5c88ee461a6d16e91e2c </span><br><span class="line">  <span class="comment"># 回滚到这个id时的状态，将此时id之后做的操作都删除</span></span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>git reflog <span class="comment"># 回滚到刚才删除的信息时候的commit</span></span><br><span class="line">  git reset --hard commit_id <span class="comment"># 直接回到刚才被删时候的状态</span></span><br><span class="line"></span><br><span class="line"><span class="number">5.</span></span><br></pre></td></tr></table></figure>
-
-<p><a href="http://www.cnblogs.com/wupeiqi/p/7295372.html" target="_blank" rel="noopener">http://www.cnblogs.com/wupeiqi/p/7295372.html</a></p>
-<h4 id="git-stash"><a href="#git-stash" class="headerlink" title="git stash"></a>git stash</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">git stash</span><br><span class="line"><span class="comment"># 将未提交的修改放在暂存区</span></span><br><span class="line">git stash pop <span class="comment"># 把未提交的修改拿回来继续修改</span></span><br><span class="line"><span class="comment"># pycharm中有bug，会一直修改.idea中的workspace.xml文件，不要用pycharm，要不然会冲突</span></span><br><span class="line"></span><br><span class="line">git stash             <span class="comment"># 将当前工作区所有修改过的内容存储到“某个地方”，将工作区还原到当前版本未修改过的状态</span></span><br><span class="line">git stash list        <span class="comment"># 查看“某个地方”存储的所有记录</span></span><br><span class="line">git stash clear     <span class="comment"># 清空“某个地方”</span></span><br><span class="line">git stash pop       <span class="comment"># 将第一个记录从“某个地方”重新拿到工作区（可能有冲突）</span></span><br><span class="line">git stash apply     <span class="comment"># 编号, 将指定编号记录从“某个地方”重新拿到工作区（可能有冲突） </span></span><br><span class="line">git stash drop      <span class="comment"># 编号，删除指定编号的记录</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="git-branch-分支"><a href="#git-branch-分支" class="headerlink" title="git branch 分支"></a>git branch 分支</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git branch <span class="comment"># 查看当前分支</span></span><br><span class="line">git branch dev <span class="comment"># 创建dev</span></span><br><span class="line">git branch -d dev <span class="comment"># 删除dev分支</span></span><br><span class="line">git checkout dev <span class="comment"># 切换dev</span></span><br><span class="line">git merge dev <span class="comment"># 在master中执行代码，将dev合并到master</span></span><br></pre></td></tr></table></figure>
-
-<p>问题：当在开发某个功能到1/2时，如果想要回到原来的状态修复原来的代码。</p>
-<p>​    master</p>
-<p>​    dev(开发)</p>
-<p>​    当要紧急修复bug了    </p>
-<ol>
-<li><p>[dev]将dev中现在正在开发的功能提交到dev</p>
-<p>git add .</p>
-<p>git commit -m “xxx”</p>
-<ol start="2">
-<li>切换回主分支</li>
-</ol>
-<p>git checkout master</p>
-<ol start="3">
-<li>创建并切换到bug分支</li>
-</ol>
-<p>git branch bug</p>
-<p>git checkout bug</p>
-<p>在bug分支上进行修复。。。</p>
-<p>git add .</p>
-<p>git commit -m “bug修复”</p>
-<ol start="4">
-<li>git checkout master</li>
-</ol>
-<p>git merge bug（git merge –no-ff bug)</p>
-<p>git branch -d bug</p>
-<ol start="5">
-<li>git branch 展示已有的环境</li>
-</ol>
-</li>
-</ol>
-<p>回答：创建一个bug分支，进行修复，修复完成后合并到master上</p>
-<ol start="6">
-<li><p>切换到dev继续开发</p>
-<p>git checkout dev </p>
-<p>……</p>
-<p>git add .</p>
-<p>git commit -m “开发完毕”</p>
-<ol start="7">
-<li>git checkout master</li>
-</ol>
-<p>git merge dev</p>
-</li>
-</ol>
-<h3 id="git-rebase"><a href="#git-rebase" class="headerlink" title="git rebase"></a>git rebase</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git rebase -i c80dc1e, -i代表交互模式</span><br><span class="line">git rebase 合并+将提交记录合并到一条主线-&gt;提交记录整洁</span><br><span class="line">如果产生冲突：</span><br><span class="line">	解决完冲突后，再执行</span><br><span class="line">	git rebase --skip</span><br><span class="line">rebase和merge都是提交的，但是rebase可以使提交线整洁</span><br><span class="line"></span><br><span class="line">面试题：</span><br></pre></td></tr></table></figure>
-
-<h3 id="git-log"><a href="#git-log" class="headerlink" title="git log"></a>git log</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git log --oneline --graph --all <span class="comment"># 显示分支图</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="git-clone"><a href="#git-clone" class="headerlink" title="git clone"></a>git clone</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://gitee.com/test/xx.git</span><br></pre></td></tr></table></figure>
-
-<h3 id="git-pull"><a href="#git-pull" class="headerlink" title="git pull"></a>git pull</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git pull origin dev # 把dev拉下来 </span><br><span class="line"># 在任何地方任何地点，只要公司的仓库能联网，就把它拉下来开发</span><br><span class="line">git</span><br></pre></td></tr></table></figure>
-
-<h3 id="多人协同开发-每个人创建一个分支"><a href="#多人协同开发-每个人创建一个分支" class="headerlink" title="多人协同开发:每个人创建一个分支"></a>多人协同开发:每个人创建一个分支</h3><p>公司是否做代码的review？谁来做？怎么做？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">master</span><br><span class="line">dev</span><br><span class="line">	- review(组长做代码review)</span><br><span class="line">	- kouxl</span><br><span class="line">	- hen</span><br><span class="line">一般：小功能1/2/3天一次merge</span><br><span class="line"></span><br><span class="line">面试题：邀请其他人一起开发</span><br><span class="line">	- 项目合作者。</span><br><span class="line">	- 创建组织，邀请成员</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">面试题:fork  代码</span><br><span class="line">		- fork代码到自己目录</span><br><span class="line">		- 修改代码</span><br><span class="line">		- 创建pull request</span><br></pre></td></tr></table></figure>
-
-<h3 id="git之gitignore文件"><a href="#git之gitignore文件" class="headerlink" title="git之gitignore文件"></a>git之gitignore文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">创建.gitignore文件，编写git忽略一些你想忽略的文件名</span><br><span class="line">例如在里面写上100.md,不管你对100.md文件做了什么修改，都不会被检测到，git status不会检测到它</span><br></pre></td></tr></table></figure>
-
-<p>用于定义v1 v2 等版本</p>
-<h3 id="git-tag"><a href="#git-tag" class="headerlink" title="git tag"></a>git tag</h3><p>作业：</p>
-<pre><code>- 模拟自己创业</code></pre><ul>
-<li>协同开发<pre><code>- 组长，创建仓库；合作者模式邀请成员
-   - master/dev/review
-   - 创建自己分支</code></pre><ul>
-<li>切换到review分支，将个人分支上的代码合并到review</li>
-<li>再将review分支push到代码仓库【可能报错】</li>
-<li>如果报错：有人已经在这段时间先提交了</li>
-<li>解决冲突</li>
-<li>再提交</li>
-<li>组长在review分支，看一看</li>
-<li>在本地合并到dev分支</li>
-<li>将本地dev推动到代码仓库</li>
-<li>组内设置两个人同时修改一个文件，产生冲突。</li>
-</ul>
-</li>
-</ul>
-<h3 id="ContentType"><a href="#ContentType" class="headerlink" title="ContentType"></a>ContentType</h3><h4 id="CORS"><a href="#CORS" class="headerlink" title="CORS"></a>CORS</h4><p><img src="http://q1cw3e2d5.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720191112154020.jpg" alt></p>
+<p>[Flask从入门到放弃第一说 – 通过werkzurg了解wsgi]</p>
+<p>[Flask从入门到放弃第二说 – flask快速使用]</p>
+<p>[Flask从入门到放弃第三说 – threading.local和高级方法]</p>
+<p>[Flask从入门到放弃第四说 – LocalStack和Local对象实现栈的管理]</p>
+<p>[Flask从入门到放弃第五说 – Flask源码之：配置加载]</p>
+<p>[Flask从入门到放弃第六说 – Flask源码之：路由加载]</p>
+<p>持续更新中…</p>
 
       
 
@@ -309,7 +219,15 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技术</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">flask</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">目录</a>
         		</li>
       		
 		</ul>
@@ -328,18 +246,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/11/22/drf源码分析第五说 -- 认证/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/11/25/drf源码分析第六说----权限/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          drf源码分析第五说 -- 认证
+          drf源码分析第六说 -- 权限
         
       </div>
     </a>
   
   
-    <a href="/2019/11/21/drf源码分析第三说 -- 分页/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">drf源码分析第三说 -- 分页</div>
+    <a href="/2019/11/23/drf系列总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">drf系列总结目录</div>
       <i class="icon-circle-right"></i>
     </a>
   

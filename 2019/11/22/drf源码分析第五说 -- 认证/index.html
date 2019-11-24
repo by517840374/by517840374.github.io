@@ -6,23 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>git工具的使用 | github-blogs</title>
+  <title>drf源码分析第五说 -- 认证 | github-blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="协同开发软件git">
-<meta name="keywords" content="技术">
+  <meta name="description" content="源码解析 – 认证">
+<meta name="keywords" content="python,drf,django">
 <meta property="og:type" content="article">
-<meta property="og:title" content="git工具的使用">
-<meta property="og:url" content="http://yoursite.com/2019/11/22/git/index.html">
+<meta property="og:title" content="drf源码分析第五说 -- 认证">
+<meta property="og:url" content="http://yoursite.com/2019/11/22/drf源码分析第五说 -- 认证/index.html">
 <meta property="og:site_name" content="github-blogs">
-<meta property="og:description" content="协同开发软件git">
+<meta property="og:description" content="源码解析 – 认证">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://yoursite.com/2019/11/22/git/img/1562137676568.png">
-<meta property="og:image" content="http://q1cw3e2d5.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720191112154020.jpg">
-<meta property="og:updated_time" content="2019-11-22T11:42:42.411Z">
+<meta property="og:image" content="http://q1cw3e2d5.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720191124170838.png">
+<meta property="og:updated_time" content="2019-11-24T09:11:31.997Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="git工具的使用">
-<meta name="twitter:description" content="协同开发软件git">
-<meta name="twitter:image" content="http://yoursite.com/2019/11/22/git/img/1562137676568.png">
+<meta name="twitter:title" content="drf源码分析第五说 -- 认证">
+<meta name="twitter:description" content="源码解析 – 认证">
+<meta name="twitter:image" content="http://q1cw3e2d5.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720191124170838.png">
   
     <link rel="alternative" href="/atom.xml" title="github-blogs" type="application/atom+xml">
   
@@ -156,20 +155,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-git" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-drf源码分析第五说 -- 认证" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      git工具的使用
+      drf源码分析第五说 -- 认证
     </h1>
   
 
         
-        <a href="/2019/11/22/git/" class="archive-article-date">
-  	<time datetime="2019-11-22T10:00:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
+        <a href="/2019/11/22/drf源码分析第五说 -- 认证/" class="archive-article-date">
+  	<time datetime="2019-11-22T11:58:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
 </a>
         <!-- 开始添加字数统计 -->
 		
@@ -178,7 +177,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">1.4k字</span>
+        <span class="post-count">1.6k字</span>
       </span>
     </span>
 
@@ -187,7 +186,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">5分</span>
+        <span class="post-count">7分</span>
       </span>
     </span>
 </div>
@@ -199,103 +198,84 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>协同开发软件git</p>
-</blockquote>
+        <p><strong>源码解析 – 认证</strong></p>
 <a id="more"></a>
 
-<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>软件，帮助我们做版本控制</p>
-<p>如果你是windows用户，需要下载一个git应用程序，一路点就行，没有什么需要注意的地方 </p>
-<p>安装完成后在任一文件夹内右键都有显示，单击git bash here即可</p>
-<p><img src="img/1562137676568.png" alt="1562137676568"></p>
-<h3 id="简易的命令行入门教程"><a href="#简易的命令行入门教程" class="headerlink" title="简易的命令行入门教程:"></a>简易的命令行入门教程:</h3><h4 id="Git-全局设置"><a href="#Git-全局设置" class="headerlink" title="Git 全局设置:"></a>Git 全局设置:</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --<span class="keyword">global</span> user.name <span class="string">"name"</span>  <span class="comment"># 上传者的用户名</span></span><br><span class="line">git config --<span class="keyword">global</span> user.email <span class="string">"you@email.com"</span> <span class="comment"># 上传者的邮箱 配置一次即可，后面无需配置 这样就知道是谁上传的</span></span><br></pre></td></tr></table></figure>
+<h3 id="0x01-drf认证流程"><a href="#0x01-drf认证流程" class="headerlink" title="0x01 drf认证流程"></a>0x01 drf认证流程</h3><p>之前在版本的时候了解到了django中CBV的执行流程，最后走到了dispatch()方法。寻找版本的时候，先看了一下通过Request类对当前的request对象进行封装，然后执行initial()方法，里面有版本值的获取方式，今天的认证也是基于dispatch，一步一步的向下走。</p>
+<blockquote>
+<p>APIView dispatch</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">APIView</span><span class="params">(View)</span>:</span></span><br><span class="line">    </span><br><span class="line">    **<span class="number">5.</span> 从配置中取出authentication_classes对应的值</span><br><span class="line">    authentication_classes = api_settings.DEFAULT_AUTHENTICATION_CLASSES</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dispatch</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        **<span class="number">1.</span> <span class="comment"># ###################### 第一步 ###########################</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        request,是django的request，它的内部有：request.GET/request.POST/request.method</span></span><br><span class="line"><span class="string">        args,kwargs是在路由中匹配到的参数，如：</span></span><br><span class="line"><span class="string">            url(r'^order/(\d+)/(?P&lt;version&gt;\w+)/$', views.OrderView.as_view()),</span></span><br><span class="line"><span class="string">            http://www.xxx.com/order/1/v2/</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.args = args</span><br><span class="line">        self.kwargs = kwargs</span><br><span class="line">        </span><br><span class="line">        **<span class="number">2.</span> 通过Request封装</span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        request = 生成了一个新的request对象，此对象的内部封装了一些值。</span></span><br><span class="line"><span class="string">        request = Request(request)</span></span><br><span class="line"><span class="string">            - 内部封装了 _request = 老的request</span></span><br><span class="line"><span class="string">            - 内部封装了 authenticators = [MyAuthentication(), ]</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        **<span class="number">6.</span> 封装完之后返回给新的request</span><br><span class="line">        request = self.initialize_request(request, *args, **kwargs)</span><br><span class="line">        self.request = request</span><br><span class="line">        self.headers = self.default_response_headers  <span class="comment"># deprecate?</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            </span><br><span class="line">            **<span class="number">7.</span> 执行initial方法</span><br><span class="line">            self.initial(request, *args, **kwargs)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Get the appropriate handler method</span></span><br><span class="line">            <span class="keyword">if</span> request.method.lower() <span class="keyword">in</span> self.http_method_names:</span><br><span class="line">                handler = getattr(self, request.method.lower(),</span><br><span class="line">                                  self.http_method_not_allowed)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                handler = self.http_method_not_allowed</span><br><span class="line"></span><br><span class="line">            response = handler(request, *args, **kwargs)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> exc:</span><br><span class="line">            response = self.handle_exception(exc)</span><br><span class="line"></span><br><span class="line">        self.response = self.finalize_response(request, response, *args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> self.response</span><br></pre></td></tr></table></figure>
 
-<h4 id="创建-git-仓库"><a href="#创建-git-仓库" class="headerlink" title="创建 git 仓库:"></a>创建 git 仓库:</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mkdir git	<span class="comment"># 创建一个git文件夹</span></span><br><span class="line">cd git	  <span class="comment"># 切换到git文件夹</span></span><br><span class="line">git init  <span class="comment"># 初始化仓库</span></span><br><span class="line">touch README.md   <span class="comment"># 创建一个README文档(可建可不建)</span></span><br><span class="line">git add README.md   <span class="comment"># 将README.md添加到暂时缓存区中</span></span><br><span class="line">git status  <span class="comment"># 查看暂时缓存区的文件，查看是否选上</span></span><br><span class="line">git commit -m <span class="string">"first commit"</span>  <span class="comment"># 给这个上传过程添加注释，简要说明上传的原因 也可以输入git log 查看之前上传的日志</span></span><br><span class="line">git remote add origin https://gitee.com/test/git.git  <span class="comment"># 将你码云仓库的网址用origin代替</span></span><br><span class="line">git push -u origin master  <span class="comment"># 推送上去 这个步骤是将本地的上传到远程码云仓库中，第一会提示输入密码</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>initialize_request</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initialize_request</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        Returns the initial request object.</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        parser_context = self.get_parser_context(request)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Request(</span><br><span class="line">            request,</span><br><span class="line">            parsers=self.get_parsers(),</span><br><span class="line">            **<span class="number">3.</span> 对认证进行封装</span><br><span class="line">            authenticators=self.get_authenticators(), <span class="comment"># [MyAuthentication(),]</span></span><br><span class="line">            negotiator=self.get_content_negotiator(),</span><br><span class="line">            parser_context=parser_context</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
 
-<h4 id="第二次及以后上传"><a href="#第二次及以后上传" class="headerlink" title="第二次及以后上传"></a>第二次及以后上传</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">在之前上传过的目录上传，只需要输入<span class="number">3</span>个命令</span><br><span class="line"><span class="number">1.</span> git add . 或 git add test.txt </span><br><span class="line"><span class="comment"># 第一个是把全部文件添加到暂时缓存区，即上传全部，第二个就是单个上传</span></span><br><span class="line"><span class="number">2.</span> git commit -m <span class="string">"Third upload"</span></span><br><span class="line"><span class="comment"># 添加简要说明</span></span><br><span class="line"><span class="number">3.</span> git push -u origin master</span><br><span class="line"><span class="comment"># 将需要上传的文件传输上去</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>get_authenticators</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_authenticators</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        Instantiates and returns the list of authenticators that this view can use.</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        **<span class="number">4.</span> authentication_classes这个是从配置中取的值，取出值并对其实例化</span><br><span class="line">        <span class="keyword">return</span> [ auth() <span class="keyword">for</span> auth <span class="keyword">in</span> self.authentication_classes ]</span><br></pre></td></tr></table></figure>
 
-<h3 id="进阶功能"><a href="#进阶功能" class="headerlink" title="进阶功能"></a>进阶功能</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>git status 即时查看状态</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>git log 查看日志</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>git reset --hard (git 查看到的commit id)</span><br><span class="line">  git reset --hard <span class="number">0</span>b3720b5ba291318e0da5c88ee461a6d16e91e2c </span><br><span class="line">  <span class="comment"># 回滚到这个id时的状态，将此时id之后做的操作都删除</span></span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>git reflog <span class="comment"># 回滚到刚才删除的信息时候的commit</span></span><br><span class="line">  git reset --hard commit_id <span class="comment"># 直接回到刚才被删时候的状态</span></span><br><span class="line"></span><br><span class="line"><span class="number">5.</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>initial</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">APIView</span><span class="params">(View)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initial</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        self.format_kwarg = self.get_format_suffix(**kwargs)</span><br><span class="line"></span><br><span class="line">        neg = self.perform_content_negotiation(request)</span><br><span class="line">        request.accepted_renderer, request.accepted_media_type = neg</span><br><span class="line">        </span><br><span class="line">        version, scheme = self.determine_version(request, *args, **kwargs)</span><br><span class="line">        request.version, request.versioning_scheme = version, scheme</span><br><span class="line"></span><br><span class="line">        **<span class="number">8.</span> 执行下面的perform_authentication进行认证</span><br><span class="line">        self.perform_authentication(request)</span><br><span class="line">        self.check_permissions(request)</span><br><span class="line">        self.check_throttles(request)</span><br></pre></td></tr></table></figure>
 
-<p><a href="http://www.cnblogs.com/wupeiqi/p/7295372.html" target="_blank" rel="noopener">http://www.cnblogs.com/wupeiqi/p/7295372.html</a></p>
-<h4 id="git-stash"><a href="#git-stash" class="headerlink" title="git stash"></a>git stash</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">git stash</span><br><span class="line"><span class="comment"># 将未提交的修改放在暂存区</span></span><br><span class="line">git stash pop <span class="comment"># 把未提交的修改拿回来继续修改</span></span><br><span class="line"><span class="comment"># pycharm中有bug，会一直修改.idea中的workspace.xml文件，不要用pycharm，要不然会冲突</span></span><br><span class="line"></span><br><span class="line">git stash             <span class="comment"># 将当前工作区所有修改过的内容存储到“某个地方”，将工作区还原到当前版本未修改过的状态</span></span><br><span class="line">git stash list        <span class="comment"># 查看“某个地方”存储的所有记录</span></span><br><span class="line">git stash clear     <span class="comment"># 清空“某个地方”</span></span><br><span class="line">git stash pop       <span class="comment"># 将第一个记录从“某个地方”重新拿到工作区（可能有冲突）</span></span><br><span class="line">git stash apply     <span class="comment"># 编号, 将指定编号记录从“某个地方”重新拿到工作区（可能有冲突） </span></span><br><span class="line">git stash drop      <span class="comment"># 编号，删除指定编号的记录</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>perform_authentication</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">APIView</span><span class="params">(View)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">perform_authentication</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        </span><br><span class="line">        **<span class="number">9.</span> 这儿调用了request.user,现在的request是Request封装的实例化对象，所以会跳转到Request().user</span><br><span class="line">        **<span class="number">18.</span> 接收到了self._user，认证结束</span><br><span class="line">        request.user</span><br></pre></td></tr></table></figure>
 
-<h4 id="git-branch-分支"><a href="#git-branch-分支" class="headerlink" title="git branch 分支"></a>git branch 分支</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git branch <span class="comment"># 查看当前分支</span></span><br><span class="line">git branch dev <span class="comment"># 创建dev</span></span><br><span class="line">git branch -d dev <span class="comment"># 删除dev分支</span></span><br><span class="line">git checkout dev <span class="comment"># 切换dev</span></span><br><span class="line">git merge dev <span class="comment"># 在master中执行代码，将dev合并到master</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Request().user</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Request</span>:</span></span><br><span class="line">    **<span class="number">10.</span> 把方法变成属性的一个装饰器</span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">user</span><span class="params">(self)</span>:</span></span><br><span class="line">        </span><br><span class="line">        **<span class="number">11.</span> 先判断是否有_user属性，然后开启了一个上下文wrap_attributeerrors()</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> hasattr(self, <span class="string">'_user'</span>):</span><br><span class="line">            **<span class="number">12.</span> 先忽略它，先当它是成功的，然后执行下面的方法</span><br><span class="line">            <span class="keyword">with</span> wrap_attributeerrors():</span><br><span class="line">                **<span class="number">17.</span> 这儿就得到了self._user和self.auth</span><br><span class="line">                self._authenticate()</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> self._user</span><br></pre></td></tr></table></figure>
 
-<p>问题：当在开发某个功能到1/2时，如果想要回到原来的状态修复原来的代码。</p>
-<p>​    master</p>
-<p>​    dev(开发)</p>
-<p>​    当要紧急修复bug了    </p>
-<ol>
-<li><p>[dev]将dev中现在正在开发的功能提交到dev</p>
-<p>git add .</p>
-<p>git commit -m “xxx”</p>
-<ol start="2">
-<li>切换回主分支</li>
-</ol>
-<p>git checkout master</p>
-<ol start="3">
-<li>创建并切换到bug分支</li>
-</ol>
-<p>git branch bug</p>
-<p>git checkout bug</p>
-<p>在bug分支上进行修复。。。</p>
-<p>git add .</p>
-<p>git commit -m “bug修复”</p>
-<ol start="4">
-<li>git checkout master</li>
-</ol>
-<p>git merge bug（git merge –no-ff bug)</p>
-<p>git branch -d bug</p>
-<ol start="5">
-<li>git branch 展示已有的环境</li>
-</ol>
-</li>
-</ol>
-<p>回答：创建一个bug分支，进行修复，修复完成后合并到master上</p>
-<ol start="6">
-<li><p>切换到dev继续开发</p>
-<p>git checkout dev </p>
-<p>……</p>
-<p>git add .</p>
-<p>git commit -m “开发完毕”</p>
-<ol start="7">
-<li>git checkout master</li>
-</ol>
-<p>git merge dev</p>
-</li>
-</ol>
-<h3 id="git-rebase"><a href="#git-rebase" class="headerlink" title="git rebase"></a>git rebase</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git rebase -i c80dc1e, -i代表交互模式</span><br><span class="line">git rebase 合并+将提交记录合并到一条主线-&gt;提交记录整洁</span><br><span class="line">如果产生冲突：</span><br><span class="line">	解决完冲突后，再执行</span><br><span class="line">	git rebase --skip</span><br><span class="line">rebase和merge都是提交的，但是rebase可以使提交线整洁</span><br><span class="line"></span><br><span class="line">面试题：</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>wrap_attributeerrors</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@contextmanager</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">wrap_attributeerrors</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Used to re-raise AttributeErrors caught during authentication, preventing</span></span><br><span class="line"><span class="string">    these errors from otherwise being handled by the attribute access protocol.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">yield</span></span><br><span class="line">    <span class="keyword">except</span> AttributeError:</span><br><span class="line">        info = sys.exc_info()</span><br><span class="line">        exc = WrappedAttributeError(str(info[<span class="number">1</span>]))</span><br><span class="line">        <span class="keyword">raise</span> exc.with_traceback(info[<span class="number">2</span>])</span><br><span class="line"></span><br><span class="line">这里的原函数是一个生成器，而<span class="keyword">with</span> wrap_attributeerrors是一个用contextlib中的contextmanager装饰器装饰的一个上下文管理器，返回的是一个_GeneratorContextManager对象，而这个对象中重写了__enter__和__exit__方法，因此当<span class="keyword">with</span> wrap_attributeerrors()时，调用的是_GeneratorContextManager中的__enter__，而这个方法里调用了原函数的next()方法，因此相当于启动了该生成器。然后回来执行上下文中的代码，如果出现异常，则会执行_GeneratorContextManager中的__exit__，也就是再执行一次make_context.next()函数，所以先会用自己所定义的异常处理方式来处理异常，然后再处理其他异常。</span><br></pre></td></tr></table></figure>
 
-<h3 id="git-log"><a href="#git-log" class="headerlink" title="git log"></a>git log</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git log --oneline --graph --all <span class="comment"># 显示分支图</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>_authenticate</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Request</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_authenticate</span><span class="params">(self)</span>:</span></span><br><span class="line">        </span><br><span class="line">        **<span class="number">13.</span> 这儿就开始循环了，循环第<span class="number">4</span>步的authenticators实例化对象，</span><br><span class="line">        <span class="keyword">for</span> authenticator <span class="keyword">in</span> self.authenticators:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                </span><br><span class="line">                **<span class="number">14.</span> 寻找authenticate方法，实例化对象authenticator通过c3算法查找authenticate方法并执行，返回一个元组，所以说这儿就可以自己定义一个类，继承APIView，实现authenticate方法，自己对它进行验证，校验</span><br><span class="line">                user_auth_tuple = authenticator.authenticate(self)</span><br><span class="line">                **默认的authenticate方法</span><br><span class="line">                <span class="string">"""</span></span><br><span class="line"><span class="string">                class ForcedAuthentication:</span></span><br><span class="line"><span class="string">                    """</span></span><br><span class="line">                    This authentication <span class="class"><span class="keyword">class</span> <span class="title">is</span> <span class="title">used</span> <span class="title">if</span> <span class="title">the</span> <span class="title">test</span> <span class="title">client</span> <span class="title">or</span> <span class="title">request</span> <span class="title">factory</span></span></span><br><span class="line"><span class="class">                    <span class="title">forcibly</span> <span class="title">authenticated</span> <span class="title">the</span> <span class="title">request</span>.</span></span><br><span class="line"><span class="class">                    """</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">                    <span class="title">def</span> <span class="title">__init__</span><span class="params">(self, force_user, force_token)</span>:</span></span><br><span class="line">                        self.force_user = force_user</span><br><span class="line">                        self.force_token = force_token</span><br><span class="line"></span><br><span class="line">                    <span class="function"><span class="keyword">def</span> <span class="title">authenticate</span><span class="params">(self, request)</span>:</span></span><br><span class="line">                        **force_user和force_token都可以通过Request这个类获取得到</span><br><span class="line">                        <span class="string">'''</span></span><br><span class="line"><span class="string">                        Request类</span></span><br><span class="line"><span class="string">                        force_user = getattr(request, '_force_auth_user', None)</span></span><br><span class="line"><span class="string">        				force_token = getattr(request, '_force_auth_token', None)</span></span><br><span class="line"><span class="string">                        if force_user is not None or force_token is not None:</span></span><br><span class="line"><span class="string">                            forced_auth = ForcedAuthentication(force_user, force_token)</span></span><br><span class="line"><span class="string">                            self.authenticators = (forced_auth,)</span></span><br><span class="line"><span class="string">                        '''</span></span><br><span class="line">                        <span class="keyword">return</span> (self.force_user, self.force_token)</span><br><span class="line">                <span class="string">"""</span></span><br><span class="line"><span class="string">            except exceptions.APIException:</span></span><br><span class="line"><span class="string">                self._not_authenticated()</span></span><br><span class="line"><span class="string">                raise</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">            if user_auth_tuple is not None:</span></span><br><span class="line"><span class="string">                </span></span><br><span class="line"><span class="string">                **15. 对其封装，因为有值了，所以下次直接return</span></span><br><span class="line"><span class="string">                self._authenticator = authenticator</span></span><br><span class="line"><span class="string">                </span></span><br><span class="line"><span class="string">                **16. user和auth就得到了对应的值，并返回给上一层</span></span><br><span class="line"><span class="string">                self.user, self.auth = user_auth_tuple</span></span><br><span class="line"><span class="string">                return</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        self._not_authenticated() **如过user_auth_tuple获取不到值，则会执行这个方法，都变成None</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">    def _not_authenticated(self):</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        Set authenticator, user &amp; authtoken representing an unauthenticated request.</span><br><span class="line"></span><br><span class="line">        Defaults are <span class="literal">None</span>, AnonymousUser &amp; <span class="literal">None</span>.</span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        self._authenticator = None</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        if api_settings.UNAUTHENTICATED_USER:</span></span><br><span class="line"><span class="string">            self.user = api_settings.UNAUTHENTICATED_USER()</span></span><br><span class="line"><span class="string">        else:</span></span><br><span class="line"><span class="string">            self.user = None</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        if api_settings.UNAUTHENTICATED_TOKEN:</span></span><br><span class="line"><span class="string">            self.auth = api_settings.UNAUTHENTICATED_TOKEN()</span></span><br><span class="line"><span class="string">        else:</span></span><br><span class="line"><span class="string">            self.auth = None</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="git-clone"><a href="#git-clone" class="headerlink" title="git clone"></a>git clone</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://gitee.com/test/xx.git</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>当用户发来请求时，找到认证的所有类并实例化成为对象列表，然后将对象列表封装到新的request对象中。</p>
+<p>以后在视同中调用request.user</p>
+<p>在内部会循环认证的对象列表，并执行每个对象的authenticate方法，该方法用于认证，他会返回两个值分别会赋值给<br>request.user/request.auth </p>
+</blockquote>
+<p>差不多就是这些，再细的话，就是每行加注释了，如果都是注释的话，我是看不下去的。不过知道了总体流程的话，一些小细节我相信还是可以看懂的</p>
+<h3 id="0x02-认证示例"><a href="#0x02-认证示例" class="headerlink" title="0x02 认证示例"></a>0x02 认证示例</h3><blockquote>
+<p>settings.py</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">REST_FRAMEWORK = &#123;</span><br><span class="line">    <span class="string">"PAGE_SIZE"</span>:<span class="number">2</span>,</span><br><span class="line">    <span class="string">"DEFAULT_PAGINATION_CLASS"</span>:<span class="string">"rest_framework.pagination.PageNumberPagination"</span>,</span><br><span class="line">    <span class="string">'DEFAULT_VERSIONING_CLASS'</span>:<span class="string">"rest_framework.versioning.URLPathVersioning"</span>,</span><br><span class="line">    <span class="string">"ALLOWED_VERSIONS"</span>:[<span class="string">'v1'</span>,],</span><br><span class="line">    <span class="comment"># "UNAUTHENTICATED_USER":None, # 不知道你们对这个眼熟吗？它是在_not_authenticated方法中用到了</span></span><br><span class="line">    <span class="comment"># "UNAUTHENTICATED_TOKEN":None, # 这个也用到了</span></span><br><span class="line">    <span class="string">"DEFAULT_AUTHENTICATION_CLASSES"</span>:[<span class="string">"api.extends.auth.HulaQueryParamAuthentication"</span>,],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="git-pull"><a href="#git-pull" class="headerlink" title="git pull"></a>git pull</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git pull origin dev # 把dev拉下来 </span><br><span class="line"># 在任何地方任何地点，只要公司的仓库能联网，就把它拉下来开发</span><br><span class="line">git</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>api.extends.auth</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.authentication <span class="keyword">import</span> BaseAuthentication</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LuffyAuthentication</span><span class="params">(BaseAuthentication)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">authenticate</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        auth</span></span><br><span class="line"><span class="string">        :param request:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        token = request.query_params.get(<span class="string">'token'</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> token:</span><br><span class="line">            <span class="keyword">return</span> (<span class="literal">None</span>, <span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">        user_object = models.UserInfo.objects.filter(token=token).first()</span><br><span class="line">        <span class="keyword">if</span> user_object:</span><br><span class="line">            <span class="keyword">return</span> (user_object, token)</span><br><span class="line">        <span class="keyword">return</span> (<span class="literal">None</span>, <span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
 
-<h3 id="多人协同开发-每个人创建一个分支"><a href="#多人协同开发-每个人创建一个分支" class="headerlink" title="多人协同开发:每个人创建一个分支"></a>多人协同开发:每个人创建一个分支</h3><p>公司是否做代码的review？谁来做？怎么做？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">master</span><br><span class="line">dev</span><br><span class="line">	- review(组长做代码review)</span><br><span class="line">	- kouxl</span><br><span class="line">	- hen</span><br><span class="line">一般：小功能1/2/3天一次merge</span><br><span class="line"></span><br><span class="line">面试题：邀请其他人一起开发</span><br><span class="line">	- 项目合作者。</span><br><span class="line">	- 创建组织，邀请成员</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">面试题:fork  代码</span><br><span class="line">		- fork代码到自己目录</span><br><span class="line">		- 修改代码</span><br><span class="line">		- 创建pull request</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>urls.py</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url,include</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^api/(?P&lt;version&gt;\w+)/'</span>, include(<span class="string">'api.urls'</span>,namespace=<span class="string">'api'</span>)),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># api.urls.py</span></span><br><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^category/$'</span>, views.CategoryView.as_view()),</span><br><span class="line">    url(<span class="string">r'^login/$'</span>, views.LoginView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
 
-<h3 id="git之gitignore文件"><a href="#git之gitignore文件" class="headerlink" title="git之gitignore文件"></a>git之gitignore文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">创建.gitignore文件，编写git忽略一些你想忽略的文件名</span><br><span class="line">例如在里面写上100.md,不管你对100.md文件做了什么修改，都不会被检测到，git status不会检测到它</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>models.py</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserInfo</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    <span class="string">"""用户表"""</span></span><br><span class="line">    username = models.CharField(verbose_name=<span class="string">'用户名'</span>,max_length=<span class="number">32</span>)</span><br><span class="line">    password = models.CharField(verbose_name=<span class="string">'密码'</span>,max_length=<span class="number">64</span>)</span><br><span class="line">    token = models.CharField(verbose_name=<span class="string">'认证随机字符串'</span>, max_length=<span class="number">64</span>, null=<span class="literal">True</span>, blank=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Category</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    name = models.CharField(verbose_name=<span class="string">"分类"</span>, max_length=<span class="number">16</span>)</span><br></pre></td></tr></table></figure>
 
-<p>用于定义v1 v2 等版本</p>
-<h3 id="git-tag"><a href="#git-tag" class="headerlink" title="git tag"></a>git tag</h3><p>作业：</p>
-<pre><code>- 模拟自己创业</code></pre><ul>
-<li>协同开发<pre><code>- 组长，创建仓库；合作者模式邀请成员
-   - master/dev/review
-   - 创建自己分支</code></pre><ul>
-<li>切换到review分支，将个人分支上的代码合并到review</li>
-<li>再将review分支push到代码仓库【可能报错】</li>
-<li>如果报错：有人已经在这段时间先提交了</li>
-<li>解决冲突</li>
-<li>再提交</li>
-<li>组长在review分支，看一看</li>
-<li>在本地合并到dev分支</li>
-<li>将本地dev推动到代码仓库</li>
-<li>组内设置两个人同时修改一个文件，产生冲突。</li>
-</ul>
-</li>
-</ul>
-<h3 id="ContentType"><a href="#ContentType" class="headerlink" title="ContentType"></a>ContentType</h3><h4 id="CORS"><a href="#CORS" class="headerlink" title="CORS"></a>CORS</h4><p><img src="http://q1cw3e2d5.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720191112154020.jpg" alt></p>
+<blockquote>
+<p>views.py</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    authentication_classes = []</span><br><span class="line">    permission_classes = []</span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    登录接口</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">    	<span class="keyword">return</span> Response(<span class="string">'order'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CategoryView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        data = models.Category.objects.all().values()</span><br><span class="line">        <span class="keyword">return</span> Response(data)</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://q1cw3e2d5.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720191124170838.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">分别请求两个链接,认证之后的才有数据</span><br><span class="line">http://127.0.0.1/api/v1/category/</span><br><span class="line">http://127.0.0.1/api/v1/category/?token=123456</span><br></pre></td></tr></table></figure>
+
 
       
 
@@ -309,7 +289,15 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技术</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">drf</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
         		</li>
       		
 		</ul>
@@ -328,18 +316,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/11/22/drf源码分析第五说 -- 认证/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/11/22/drf源码分析第四说----视图api版本/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          drf源码分析第五说 -- 认证
+          drf源码分析第四说 -- 简单视图流程/api/版本管理
         
       </div>
     </a>
   
   
-    <a href="/2019/11/21/drf源码分析第三说 -- 分页/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">drf源码分析第三说 -- 分页</div>
+    <a href="/2019/11/22/git/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">git工具的使用</div>
       <i class="icon-circle-right"></i>
     </a>
   

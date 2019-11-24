@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="github-blogs">
 <meta property="og:description" content="本人总结的一些python面试题，希望你可以获得收获！">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-21T03:48:55.500Z">
+<meta property="og:updated_time" content="2019-11-23T23:44:48.777Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试集锦">
 <meta name="twitter:description" content="本人总结的一些python面试题，希望你可以获得收获！">
@@ -168,7 +168,30 @@
         <a href="/2019/11/20/面试题库/" class="archive-article-date">
   	<time datetime="2019-11-20T11:22:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-20</time>
 </a>
-        
+        <!-- 开始添加字数统计 -->
+		
+          <div style="margin-top:10px;">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">1.2k字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">5分</span>
+      </span>
+    </span>
+</div>
+          
+		<!-- 添加完成 -->
+		
+		
       </header>
     
     <div class="article-entry" itemprop="articleBody">
@@ -176,8 +199,30 @@
         <p>本人总结的一些python面试题，希望你可以获得收获！</p>
 <a id="more"></a>
 <h2 id="第一阶段-Python基础"><a href="#第一阶段-Python基础" class="headerlink" title="第一阶段  Python基础"></a>第一阶段  Python基础</h2><ol>
-<li><p>sdf</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> </span><br></pre></td></tr></table></figure>
+<li><h4 id="for循环的坑"><a href="#for循环的坑" class="headerlink" title="for循环的坑"></a>for循环的坑</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> <span class="string">"你好呀"</span>:</span><br><span class="line">       <span class="keyword">pass</span></span><br><span class="line">print(i)</span><br><span class="line">   </span><br><span class="line">   --------------------</span><br><span class="line">   lst = []</span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> lst:</span><br><span class="line">       lst.appent(<span class="string">'alex'</span>)</span><br><span class="line">       print(lst)</span><br><span class="line">   <span class="comment"># 不会打印内容，因为lst是空的，循环不起来</span></span><br><span class="line">   </span><br><span class="line">   ------------------------</span><br><span class="line">   lst = [<span class="number">1</span>,<span class="number">2</span>]</span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> lst:</span><br><span class="line">       lst.append(<span class="string">'33'</span>)</span><br><span class="line">       print(lst)</span><br><span class="line">   <span class="comment"># 循环打印lst中的内容 --此循环是死循环</span></span><br><span class="line">   </span><br><span class="line">   --------------------------</span><br><span class="line">   lst = [<span class="number">1</span>,<span class="number">2</span>]</span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> lst:</span><br><span class="line">       lst.append(<span class="string">'333'</span>)</span><br><span class="line">   print(lst)</span><br><span class="line">   <span class="comment"># 死循环，不会打印内容</span></span><br><span class="line">   </span><br><span class="line">   --------------------------</span><br><span class="line">   lst = []</span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):</span><br><span class="line">       lst.append([])</span><br><span class="line">   print(lst)</span><br><span class="line">   <span class="comment"># [[],[],[],[],[]]</span></span><br><span class="line">   </span><br><span class="line">   ----------------------------</span><br><span class="line">   lst = [<span class="number">1</span>,<span class="number">2</span>]</span><br><span class="line">   lst[<span class="number">0</span>] = lst</span><br><span class="line">   print(lst)</span><br><span class="line">   <span class="comment"># [[……],2]</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="2">
+<li><h4 id="整数和布尔值的转换"><a href="#整数和布尔值的转换" class="headerlink" title="整数和布尔值的转换"></a>整数和布尔值的转换</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bin(56) -- 十进制转二进制</span><br><span class="line">int(&apos;1011&apos;, 2) -- 二进制转十进制</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="一行代码互换a-b"><a href="#一行代码互换a-b" class="headerlink" title="一行代码互换a,b"></a>一行代码互换a,b</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a, b = <span class="number">10</span>, <span class="number">20</span></span><br><span class="line">a, b = b, a</span><br><span class="line">print(a, b)</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="一句代码将lst去重"><a href="#一句代码将lst去重" class="headerlink" title="一句代码将lst去重"></a>一句代码将lst去重</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lst = [<span class="number">23</span>,<span class="number">4</span>,<span class="number">2342</span>,<span class="number">34</span>,<span class="number">2234</span>,<span class="number">34</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">234</span>,<span class="number">2</span>,<span class="number">23</span>,<span class="number">12</span>,<span class="number">1</span>,<span class="number">21</span>,<span class="number">12</span>]</span><br><span class="line">print(list(set(lst)))</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="字典的创建方式"><a href="#字典的创建方式" class="headerlink" title="字典的创建方式"></a>字典的创建方式</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> 通过fromkeys生成字典</span><br><span class="line">dic = dict.fromkeys(<span class="string">"abc"</span>,[])</span><br><span class="line">**注意，我这儿用dic接收了</span><br><span class="line">dic[<span class="string">'a'</span>].append(<span class="number">1</span>)</span><br><span class="line">print(dic)</span><br><span class="line"><span class="comment"># &#123;'a': [3], 'b': [3], 'c': [3]&#125; 可迭代，主要</span></span><br><span class="line"></span><br><span class="line"><span class="number">2.</span> 通过字典生成式</span><br><span class="line">dic = &#123;i:i*i <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>)&#125;</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span> dict生成</span><br><span class="line">dic = dict(a=<span class="number">1</span>,b=<span class="number">2</span>,c=<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="删除列表的坑-要记住，列表和字典是可变数据类型"><a href="#删除列表的坑-要记住，列表和字典是可变数据类型" class="headerlink" title="删除列表的坑(要记住，列表和字典是可变数据类型)"></a>删除列表的坑(要记住，列表和字典是可变数据类型)</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">lst = [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lst:</span><br><span class="line">    lst.append(<span class="number">3</span>)</span><br><span class="line">print(lst) <span class="comment"># 死循环</span></span><br><span class="line"></span><br><span class="line">-------------------</span><br><span class="line">lst = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lst:</span><br><span class="line">    lst.pop()</span><br><span class="line">print(lst) <span class="comment"># [1,2]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lst = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lst:</span><br><span class="line">    lst.pop(<span class="number">0</span>)</span><br><span class="line">print(lst) <span class="comment"># [3,4]</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<ol start="7">
+<li><h4 id="成功删除的方式"><a href="#成功删除的方式" class="headerlink" title="成功删除的方式"></a>成功删除的方式</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列表</span></span><br><span class="line">lst = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(lst)):</span><br><span class="line">	lst.pop()</span><br><span class="line">print(lst)</span><br><span class="line"></span><br><span class="line">-------------------------</span><br><span class="line">lst = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(lst)<span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>):</span><br><span class="line">    <span class="keyword">del</span> lst[i]</span><br><span class="line">print(lst)</span><br><span class="line"></span><br><span class="line">----------------------------</span><br><span class="line">lst = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]</span><br><span class="line">lst1 = lst.copy()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lst1:</span><br><span class="line">    lst.remove(i)</span><br><span class="line">print(lst)</span><br><span class="line"></span><br><span class="line">--------------------------------</span><br><span class="line"><span class="comment"># 字典</span></span><br><span class="line">dic = dict.fromkeys(<span class="string">'2345678'</span>,<span class="number">1</span>)</span><br><span class="line">dic1 = dic.copy()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> dic1:</span><br><span class="line">    dic.pop(i)</span><br><span class="line">print(dic)</span><br><span class="line"></span><br><span class="line">-------------------------------</span><br><span class="line">dic = &#123;&#125;</span><br><span class="line">dic.fromkeys(<span class="string">'abc'</span>,[])</span><br><span class="line">print(dic) <span class="comment"># &#123;&#125; 一定要仔细，这个没有给原来的dic赋值，所以上面的语句跟dic没关系</span></span><br></pre></td></tr></table></figure>
+
+
+
 
 
 
@@ -193,6 +238,20 @@
 <h3 id="2-构造函数和析构函数"><a href="#2-构造函数和析构函数" class="headerlink" title="2.构造函数和析构函数"></a>2.构造函数和析构函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">** 构造函数，用于创建对象的函数</span><br><span class="line">** 析构函数，用于销毁对象的函数</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__new__</span><span class="params">(self, *args, **kwargs)</span>:</span> <span class="comment"># 构造函数</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__del__</span><span class="params">(self, *args, **kwargs)</span>:</span> <span class="comment"># 析构函数</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">obj = Foo()</span><br><span class="line"><span class="keyword">del</span> obj</span><br></pre></td></tr></table></figure>
 
 <h3 id="3-重写和重载的区别"><a href="#3-重写和重载的区别" class="headerlink" title="3.重写和重载的区别"></a>3.重写和重载的区别</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">** 重载</span><br><span class="line">class Foo(object):</span><br><span class="line">	def f1(self, int a1):</span><br><span class="line">		return 123</span><br><span class="line">	</span><br><span class="line">	def f1(self, int a1, float a2):</span><br><span class="line">		return 345</span><br><span class="line"></span><br><span class="line">重载，函数名相同而参数类型/个数/返回值不同。</span><br><span class="line"></span><br><span class="line">** 重写</span><br><span class="line">class Foo(object):</span><br><span class="line">	def f1(self):</span><br><span class="line">		print(123)</span><br><span class="line"></span><br><span class="line">class Bar(Foo):</span><br><span class="line">	def f1(self):</span><br><span class="line">		print(666)</span><br><span class="line">		</span><br><span class="line">重写，在子类中对父类中的方法进行重写</span><br></pre></td></tr></table></figure>
+
+<p>4.dr如何帮助我们快速开发的？drf提供了哪些功能？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- 视图，APIView</span><br><span class="line">- 解析器，根据用户请求体格式不同进行数据解析，解析之后放在request.data中。</span><br><span class="line">		在进行解析时候，drf会读取http请球头 content-type.</span><br><span class="line">		如果content-type:x-www-urlencoded,那么drf会根据&amp;符号分割的形式去处理请求体</span><br><span class="line">		user=wang&amp;age=19</span><br><span class="line">		如果content-type:application/json,那么drf会根据json形式去处理请求体。</span><br><span class="line">		&#123;&quot;user&quot;:&quot;alex&quot;,&quot;age&quot;:19&#125;</span><br><span class="line">- 序列化：many=True or False (多个数据或单个数据)</span><br><span class="line">- 渲染器，可以帮我们把json数据渲染到页面上进行友好的展示。（内部会根据请求设备不同做不同的展示)</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li><p>序列化：展示特殊的数据（choices、FK、M2M）可使用 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">depth</span><br><span class="line">source，无需加括号，在源码内部会去判断是否可执行，如果可执行自动加括号。【fk/choice】</span><br><span class="line">SerializerMethodField，定义钩子方法。【m2m】</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>序列化的一些其他用法</p>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NewArticleSerializer</span><span class="params">(serializers.ModelSerializer)</span>:</span></span><br><span class="line">	tag_info = serializers.SerializerMethodField()</span><br><span class="line">   	<span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">   		model = models.Article</span><br><span class="line">   		fields = [<span class="string">'title'</span>,<span class="string">'summary'</span>,<span class="string">'tag_info'</span>]</span><br><span class="line">   	</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get_tag_info</span><span class="params">(self,obj)</span>:</span></span><br><span class="line">		<span class="keyword">return</span> [row <span class="keyword">for</span> row <span class="keyword">in</span> obj.tag.all().values(<span class="string">'id'</span>,<span class="string">'title'</span>)]</span><br><span class="line">   </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FormNewArticleSerializer</span><span class="params">(serializers.ModelSerializer)</span>:</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">   	model = models.Article</span><br><span class="line">   	fields = <span class="string">'__all__'</span></span><br></pre></td></tr></table></figure>
+
+
 
 <h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2>
       
@@ -226,18 +285,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/11/22/git/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/11/20/drf源码分析第二说----快速上手drf/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          (no title)
+          drf源码分析第二说 -- 快速上手drf
         
       </div>
     </a>
   
   
-    <a href="/2019/08/22/my-first-blog/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">my-first-blog</div>
+    <a href="/2019/11/19/呼啦圈项目总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">呼啦圈项目总结</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -364,11 +423,43 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">drf</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">flask</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">目录</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">django</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">restful</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">技术</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">单例模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">项目,drf,restful</a>
               </li>
             
             <div class="clearfix"></div>
