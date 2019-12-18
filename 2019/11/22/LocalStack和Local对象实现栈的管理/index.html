@@ -6,23 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>drf源码分析第二说 -- 快速上手drf | github-blogs</title>
+  <title>flask剖析第四说--LocalStack和Local对象实现栈的管理 | github-blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="带你快速上手drf">
-<meta name="keywords" content="python,drf,django">
+  <meta name="description" content="LocalStack和Local对象">
+<meta name="keywords" content="python,flask">
 <meta property="og:type" content="article">
-<meta property="og:title" content="drf源码分析第二说 -- 快速上手drf">
-<meta property="og:url" content="http://yoursite.com/2019/11/14/drf源码分析第二说----快速上手drf/index.html">
+<meta property="og:title" content="flask剖析第四说--LocalStack和Local对象实现栈的管理">
+<meta property="og:url" content="http://yoursite.com/2019/11/22/LocalStack和Local对象实现栈的管理/index.html">
 <meta property="og:site_name" content="github-blogs">
-<meta property="og:description" content="带你快速上手drf">
+<meta property="og:description" content="LocalStack和Local对象">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://q1cw3e2d5.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720191123133119.png">
-<meta property="og:image" content="http://q1cw3e2d5.bkt.clouddn.com/12345.png">
-<meta property="og:updated_time" content="2019-11-24T09:45:01.772Z">
+<meta property="og:updated_time" content="2019-12-08T09:37:38.163Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="drf源码分析第二说 -- 快速上手drf">
-<meta name="twitter:description" content="带你快速上手drf">
-<meta name="twitter:image" content="http://q1cw3e2d5.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720191123133119.png">
+<meta name="twitter:title" content="flask剖析第四说--LocalStack和Local对象实现栈的管理">
+<meta name="twitter:description" content="LocalStack和Local对象">
   
     <link rel="alternative" href="/atom.xml" title="github-blogs" type="application/atom+xml">
   
@@ -156,20 +153,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-drf源码分析第二说----快速上手drf" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-LocalStack和Local对象实现栈的管理" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      drf源码分析第二说 -- 快速上手drf
+      flask剖析第四说--LocalStack和Local对象实现栈的管理
     </h1>
   
 
         
-        <a href="/2019/11/14/drf源码分析第二说----快速上手drf/" class="archive-article-date">
-  	<time datetime="2019-11-14T12:18:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-14</time>
+        <a href="/2019/11/22/LocalStack和Local对象实现栈的管理/" class="archive-article-date">
+  	<time datetime="2019-11-22T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
 </a>
         <!-- 开始添加字数统计 -->
 		
@@ -178,7 +175,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">1.5k字</span>
+        <span class="post-count">4字</span>
       </span>
     </span>
 
@@ -187,7 +184,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">7分</span>
+        <span class="post-count">1分</span>
       </span>
     </span>
 </div>
@@ -199,120 +196,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><strong>带你快速上手drf</strong></p>
-<a id="more"></a>
+        <h4 id="LocalStack和Local对象"><a href="#LocalStack和Local对象" class="headerlink" title="LocalStack和Local对象"></a>LocalStack和Local对象</h4><a id="more"></a>
 
-<blockquote>
-<p>drf，又叫做django rest framework，本质上属于django的一个app</p>
-<p>帮助我们在django框架基础上快速遵循restful规范接口的程序</p>
-<p><strong>def组件的功能</strong>：</p>
-<ul>
-<li>解析器，解析请求体中的数据，将其变成我们想要的格式 request.data</li>
-<li>序列化，对对象或对象列表(queryset)进行序列化操作以及表单验证</li>
-</ul>
-<h6 id="DRF的应用场景"><a href="#DRF的应用场景" class="headerlink" title="DRF的应用场景"></a>DRF的应用场景</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; 1. 前后端分离项目</span><br><span class="line">&gt; 2. 为app写接口</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<blockquote>
-<p><strong>drf框架</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; 1.不基于drf也可以实现restful规范来开发接口程序。</span><br><span class="line">&gt; </span><br><span class="line">&gt; 2.使用了drf之后，可以快速帮我们开发restful规范来开发接口。</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h3 id="0x01-安装"><a href="#0x01-安装" class="headerlink" title="0x01 安装"></a>0x01 安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip3 install djangorestframework</span><br></pre></td></tr></table></figure>
-
-<p>先看一下drfapp的整体目录结构</p>
-<p><img src="http://q1cw3e2d5.bkt.clouddn.com/QQ%E5%9B%BE%E7%89%8720191123133119.png" alt></p>
-<h3 id="0x02-使用"><a href="#0x02-使用" class="headerlink" title="0x02 使用"></a>0x02 使用</h3><ul>
-<li><p>注册app</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">INSTALLED_APPS = [</span><br><span class="line">    <span class="string">'django.contrib.admin'</span>,</span><br><span class="line">    <span class="string">'django.contrib.auth'</span>,</span><br><span class="line">    <span class="string">'django.contrib.contenttypes'</span>,</span><br><span class="line">    <span class="string">'django.contrib.sessions'</span>,</span><br><span class="line">    <span class="string">'django.contrib.messages'</span>,</span><br><span class="line">    <span class="string">'django.contrib.staticfiles'</span>,</span><br><span class="line">    <span class="string">'rest_framework'</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>写路由</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^drf/info/'</span>, views.DrfInfoView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>写视图</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrfInfoView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        data = [</span><br><span class="line">            &#123;<span class="string">'id'</span>: <span class="number">1</span>, <span class="string">'title'</span>: <span class="string">'震惊了...xx居然给我发律师...'</span>, <span class="string">'content'</span>: <span class="string">'...'</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">        <span class="keyword">return</span> Response(data)</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h3 id="0x03-drf简单实现"><a href="#0x03-drf简单实现" class="headerlink" title="0x03 drf简单实现"></a>0x03 drf简单实现</h3><p><strong>1. 创建程序并初始化数据库</strong></p>
-<p> <strong>2. 接口：实现访问接口时，创建一个文章类型</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> views</span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^drf/category/'</span>, views.DrfCategoryView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">from rest_framework.views import APIView</span><br><span class="line">from rest_framework.response import Response</span><br><span class="line">class DrfCategoryView(APIView):</span><br><span class="line">	pass</span><br></pre></td></tr></table></figure>
-
-<p><strong>要求</strong>：实现访问接口时，创建一个文章类型。</p>
-<p>开发完毕之后，访问下面的链接，则会在数据库添加一个分类</p>
-<blockquote>
-<p><a href="http://127.0.0.1:8000/drf/category/" target="_blank" rel="noopener">http://127.0.0.1:8000/drf/category/</a></p>
-</blockquote>
-<p>用工具模拟前端发请求：postman(发送post请求)</p>
-<p> <strong>3. 参考答案</strong></p>
-<blockquote>
-<p>目录树</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">│  manage.py</span><br><span class="line">│</span><br><span class="line">├─api</span><br><span class="line">│  │  admin.py</span><br><span class="line">│  │  apps.py</span><br><span class="line">│  │  models.py</span><br><span class="line">│  │  tests.py</span><br><span class="line">│  │  views.py</span><br><span class="line">│  │  __init__.py</span><br><span class="line">│  │</span><br><span class="line">│  └─migrations</span><br><span class="line">│          __init__.py</span><br><span class="line">│</span><br><span class="line">├─drf</span><br><span class="line">│  │  settings.py</span><br><span class="line">│  │  urls.py</span><br><span class="line">│  │  wsgi.py</span><br><span class="line">│  │  __init__.py</span><br><span class="line">│  </span><br><span class="line">│</span><br><span class="line">└─templates</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>urls.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^drf/info/'</span>, views.DrfInfoView.as_view()),</span><br><span class="line">    url(<span class="string">r'^drf/category/'</span>, views.DrfCategoryView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>views.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrfInfoView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        data = [</span><br><span class="line">            &#123;<span class="string">'id'</span>: <span class="number">1</span>, <span class="string">'title'</span>: <span class="string">'震惊了...xx居然给我发律师...'</span>, <span class="string">'content'</span>: <span class="string">'...'</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">        <span class="keyword">return</span> Response(data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrfCategoryView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""增加一条分类信息"""</span></span><br><span class="line">        models.Category.objects.create(**request.data)</span><br><span class="line">        <span class="keyword">return</span> Response(<span class="string">'成功'</span>)</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>models.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Category</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    name = models.CharField(verbose_name=<span class="string">"分类"</span>, max_length=<span class="number">16</span>)</span><br></pre></td></tr></table></figure>
-
-<p><strong>4. 获取所有文章类型</strong></p>
-<blockquote>
-<p>views.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> models</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrfCategoryView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""获取所有文章分类"""</span></span><br><span class="line">        queryset = models.Category.objects.all().values(<span class="string">'id'</span>,<span class="string">'name'</span>)</span><br><span class="line">        data_list = list(queryset)</span><br><span class="line">        <span class="keyword">return</span> Response(data_list)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""增加一条分类信息"""</span></span><br><span class="line">        models.Category.objects.create(**request.data)</span><br><span class="line">        <span class="keyword">return</span> Response(<span class="string">'成功'</span>)</span><br></pre></td></tr></table></figure>
-
-<p> <strong>5. 获取一条文章类型的详细信息</strong></p>
-<blockquote>
-<p>urls.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^drf/info/'</span>, views.DrfInfoView.as_view()),</span><br><span class="line">    url(<span class="string">r'^drf/category/$'</span>, views.DrfCategoryView.as_view()),</span><br><span class="line">    url(<span class="string">r'^drf/category/(?P&lt;pk&gt;\d+)/$'</span>, views.DrfCategoryView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>views.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> django.forms.models <span class="keyword">import</span> model_to_dict</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrfInfoView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        data = [</span><br><span class="line">            &#123;<span class="string">'id'</span>: <span class="number">1</span>, <span class="string">'title'</span>: <span class="string">'震惊了...xx居然给我发律师...'</span>, <span class="string">'content'</span>: <span class="string">'...'</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">        <span class="keyword">return</span> Response(data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrfCategoryView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""获取所有文章分类"""</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        print(pk)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> pk:</span><br><span class="line">            queryset = models.Category.objects.all().values(<span class="string">'id'</span>, <span class="string">'name'</span>)</span><br><span class="line">            data_list = list(queryset)</span><br><span class="line">            <span class="keyword">return</span> Response(data_list)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            category_object = models.Category.objects.filter(id=pk).first()</span><br><span class="line">            data = model_to_dict(category_object)</span><br><span class="line">            <span class="keyword">return</span> Response(data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""增加一条分类信息"""</span></span><br><span class="line">        print(<span class="string">"request.data--&gt;"</span>,request.data)</span><br><span class="line">        models.Category.objects.create(**request.data)</span><br><span class="line">        <span class="keyword">return</span> Response(<span class="string">'成功'</span>)</span><br></pre></td></tr></table></figure>
-
-<p><strong>6. 文章分类的更新和删除</strong></p>
-<blockquote>
-<p>urls.py 跟上面的一样</p>
-<p>views.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> django.forms.models <span class="keyword">import</span> model_to_dict</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrfInfoView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        data = [</span><br><span class="line">            &#123;<span class="string">'id'</span>: <span class="number">1</span>, <span class="string">'title'</span>: <span class="string">'震惊了...xx居然给我发律师...'</span>, <span class="string">'content'</span>: <span class="string">'...'</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">        <span class="keyword">return</span> Response(data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrfCategoryView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""获取所有文章分类"""</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        print(pk)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> pk:</span><br><span class="line">            queryset = models.Category.objects.all().values(<span class="string">'id'</span>, <span class="string">'name'</span>)</span><br><span class="line">            data_list = list(queryset)</span><br><span class="line">            <span class="keyword">return</span> Response(data_list)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            category_object = models.Category.objects.filter(id=pk).first()</span><br><span class="line">            data = model_to_dict(category_object)</span><br><span class="line">            <span class="keyword">return</span> Response(data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""增加一条分类信息"""</span></span><br><span class="line">        print(<span class="string">"request.data--&gt;"</span>,request.data)</span><br><span class="line">        models.Category.objects.create(**request.data)</span><br><span class="line">        <span class="keyword">return</span> Response(<span class="string">'成功'</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""删除"""</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        models.Category.objects.filter(id=pk).delete()</span><br><span class="line">        <span class="keyword">return</span> Response(<span class="string">"删除成功"</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""更新"""</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        models.Category.objects.update(**request.data)</span><br><span class="line">        <span class="keyword">return</span> Response(<span class="string">'更新成功'</span>)</span><br></pre></td></tr></table></figure>
-
-<p>至此，CURD就结束了。</p>
-<h3 id="0x04-drf的序列化"><a href="#0x04-drf的序列化" class="headerlink" title="0x04 drf的序列化"></a>0x04 drf的序列化</h3><p>学过django的，应该对form和model form组件不陌生吧，drf也提供了类似form组件的功能，它叫做序列化–<strong>serializers</strong>,它为我们提供了</p>
-<ul>
-<li>数据校验</li>
-<li>序列化</li>
-</ul>
-<blockquote>
-<p>urls.py</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> views</span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^admin/'</span>, admin.site.urls),</span><br><span class="line">    url(<span class="string">r'^drf/category/$'</span>, views.DrfCategoryView.as_view()),</span><br><span class="line">    url(<span class="string">r'^drf/category/(?P&lt;pk&gt;\d+)/$'</span>, views.DrfCategoryView.as_view()),</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 新的视图</span></span><br><span class="line">    url(<span class="string">r'^new/category/$'</span>, views.NewCategoryView.as_view()),</span><br><span class="line">    url(<span class="string">r'^new/category/(?P&lt;pk&gt;\d+)/$'</span>, views.NewCategoryView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>views.py </p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.response <span class="keyword">import</span> Response</span><br><span class="line"><span class="keyword">from</span> django.forms.models <span class="keyword">import</span> model_to_dict</span><br><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> serializers</span><br><span class="line"><span class="keyword">from</span> api <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrfInfoView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        data = [</span><br><span class="line">            &#123;<span class="string">'id'</span>: <span class="number">1</span>, <span class="string">'title'</span>: <span class="string">'震惊了...xx居然给我发律师...'</span>, <span class="string">'content'</span>: <span class="string">'...'</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">        <span class="keyword">return</span> Response(data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrfCategoryView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""获取所有文章分类"""</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        print(pk)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> pk:</span><br><span class="line">            queryset = models.Category.objects.all().values(<span class="string">'id'</span>, <span class="string">'name'</span>)</span><br><span class="line">            data_list = list(queryset)</span><br><span class="line">            <span class="keyword">return</span> Response(data_list)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            category_object = models.Category.objects.filter(id=pk).first()</span><br><span class="line">            data = model_to_dict(category_object)</span><br><span class="line">            <span class="keyword">return</span> Response(data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""增加一条分类信息"""</span></span><br><span class="line">        print(<span class="string">"request.data--&gt;"</span>,request.data)</span><br><span class="line">        models.Category.objects.create(**request.data)</span><br><span class="line">        <span class="keyword">return</span> Response(<span class="string">'成功'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NewCategorySerializer</span><span class="params">(serializers.ModelSerializer)</span>:</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        model = models.Category</span><br><span class="line">        <span class="comment"># fields = "__all__" # 所有</span></span><br><span class="line">        <span class="comment"># exclude = ['id'] # 排除</span></span><br><span class="line">        fields = [<span class="string">'id'</span>,<span class="string">'name'</span>] <span class="comment"># 只选</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NewCategoryView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> pk:</span><br><span class="line">            queryset = models.Category.objects.all()</span><br><span class="line">            ser = NewCategorySerializer(instance=queryset, many=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">return</span> Response(ser.data)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            model_object = models.Category.objects.filter(id=pk).first()</span><br><span class="line">            ser = NewCategorySerializer(instance=model_object, many=<span class="literal">False</span>)</span><br><span class="line">            <span class="keyword">return</span> Response(ser.data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        ser = NewCategorySerializer(data=request.data)</span><br><span class="line">        <span class="keyword">if</span> ser.is_valid():</span><br><span class="line">            ser.save()</span><br><span class="line">            <span class="keyword">return</span> Response(ser.data)</span><br><span class="line">        <span class="keyword">return</span> Response(ser.errors)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        category_object = models.Category.objects.filter(id=pk).first()</span><br><span class="line">        ser = NewCategorySerializer(instance=category_object, data=request.data)</span><br><span class="line">        <span class="keyword">if</span> ser.is_valid():</span><br><span class="line">            ser.save()</span><br><span class="line">            <span class="keyword">return</span> Response(ser.data)</span><br><span class="line">        <span class="keyword">return</span> Response(ser.errors)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        pk = kwargs.get(<span class="string">'pk'</span>)</span><br><span class="line">        models.Category.objects.filter(id=pk).delete()</span><br><span class="line">        <span class="keyword">return</span> Response(<span class="string">'删除成功'</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x05-drf序列化其他知识点"><a href="#0x05-drf序列化其他知识点" class="headerlink" title="0x05 drf序列化其他知识点"></a>0x05 drf序列化其他知识点</h3><p>待续。。。</p>
-<p>Postman工具</p>
-<p><img src="http://q1cw3e2d5.bkt.clouddn.com/12345.png" alt="序列化示例"></p>
-<h3 id="小细节"><a href="#小细节" class="headerlink" title="小细节"></a>小细节</h3><p>查找模板的顺序</p>
-<ul>
-<li>优先根目录下：templates</li>
-<li>根据app的注册顺序去每个app的templates目录中找</li>
-</ul>
 
       
 
@@ -330,11 +215,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">drf</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">flask</a>
         		</li>
       		
 		</ul>
@@ -353,18 +234,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/11/15/偏函数和源码示例/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/11/24/drf系列总结/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          functools中偏函数及示例源码
+          drf系列总结目录
         
       </div>
     </a>
   
   
-    <a href="/2019/11/13/drf源码分析系列1/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">drf源码分析第一说--restful规范</div>
+    <a href="/2019/11/22/sqlhelper文件引入单例模式/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">SqlHelper--单例模式</div>
       <i class="icon-circle-right"></i>
     </a>
   
