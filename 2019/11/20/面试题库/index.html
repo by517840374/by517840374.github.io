@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="github-blogs">
 <meta property="og:description" content="本人总结的一些python面试题，希望你可以获得收获！">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-25T00:30:12.360Z">
+<meta property="og:updated_time" content="2019-12-23T10:07:11.532Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试集锦">
 <meta name="twitter:description" content="本人总结的一些python面试题，希望你可以获得收获！">
@@ -175,7 +175,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">2.6k字</span>
+        <span class="post-count">2.7k字</span>
       </span>
     </span>
 
@@ -184,7 +184,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">11分</span>
+        <span class="post-count">12分</span>
       </span>
     </span>
 </div>
@@ -253,6 +253,20 @@
 </ul>
 <h2 id="第五阶段-数据库"><a href="#第五阶段-数据库" class="headerlink" title="第五阶段 数据库"></a>第五阶段 数据库</h2><h3 id="1-数据库"><a href="#1-数据库" class="headerlink" title="1.数据库"></a>1.数据库</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">数据库设计：博客系统 / 呼啦圈</span><br><span class="line">SQL语句：</span><br><span class="line">	select * <span class="keyword">from</span> user left join depart on user.depart_id = depart.id </span><br><span class="line">	</span><br><span class="line">	select * <span class="keyword">from</span> user left join depart on user.depart_id = depart.id order by id desc</span><br><span class="line">	</span><br><span class="line">	inner join 和 left join的区别？</span><br><span class="line">	</span><br><span class="line">	select gender,count(<span class="number">1</span>) <span class="keyword">from</span> user group by gender </span><br><span class="line">	</span><br><span class="line">	select gender,count(<span class="number">1</span>) <span class="keyword">from</span> user group by gender having count(<span class="number">1</span>) &gt; <span class="number">2</span></span><br><span class="line">	</span><br><span class="line">视图：是一个虚拟的表。</span><br><span class="line">	 为某个sql语句取名字： select * from user where id&lt;100   ====&gt;  t1</span><br><span class="line">	 select * <span class="keyword">from</span> t1 where name = <span class="string">'成说'</span>、</span><br><span class="line">存储过程：是大堆存储在数据库中的SQL语句。</span><br><span class="line">	create producer pro(x1):</span><br><span class="line">		update ...</span><br><span class="line">		delete ...</span><br><span class="line">		select ...</span><br><span class="line">触发器：存储在数据中的一个特殊的东西。</span><br><span class="line">	create trigger x1 before insert 表:</span><br><span class="line">		....</span><br><span class="line">	create trigger x1 after insert 表:</span><br></pre></td></tr></table></figure>
 
+<h3 id="2-redis"><a href="#2-redis" class="headerlink" title="2. redis"></a>2. redis</h3><h5 id="如何在不重启的情况下，将rdb持久化切换成aof持久化？"><a href="#如何在不重启的情况下，将rdb持久化切换成aof持久化？" class="headerlink" title="如何在不重启的情况下，将rdb持久化切换成aof持久化？"></a>如何在不重启的情况下，将rdb持久化切换成aof持久化？</h5><blockquote>
+<ol>
+<li><p>准备一个rdb的redis数据库</p>
+</li>
+<li><p>通过命令直接切换aof</p>
+<p>127.0.0.1:6379&gt; CONFIG set appendonly yes   #开启AOF功能<br>OK<br>127.0.0.1:6379&gt; CONFIG SET save “”  #关闭RDB功能<br>OK</p>
+</li>
+<li><p>正确情况下，会生成aof日志文件了，此时命令操作都是在aof里面了</p>
+</li>
+<li><p>还得修改配置文件，以上命令只是临时生效，改完以后，下次指定配置文件启动，就一直是aof了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt;    port 6379</span><br><span class="line">&gt;    logfile /data/6379/redis.log</span><br><span class="line">&gt;    dir /data/6379</span><br><span class="line">&gt;    dbfilename  dbmp.rdb</span><br><span class="line">&gt;    save 900 1</span><br><span class="line">&gt;    save 300 10</span><br><span class="line">&gt;    save 60  10000</span><br><span class="line">&gt;    daemonize yes</span><br><span class="line">&gt;    appendonly yes  </span><br><span class="line">&gt;    appendfsync everysec     </span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
 <h2 id="第六阶段-前端-amp-django"><a href="#第六阶段-前端-amp-django" class="headerlink" title="第六阶段 前端&amp;django"></a>第六阶段 前端&amp;django</h2><h3 id="1-在浏览器上输入www-xxx-com发生了什么？"><a href="#1-在浏览器上输入www-xxx-com发生了什么？" class="headerlink" title="1.在浏览器上输入www.xxx.com发生了什么？"></a>1.在浏览器上输入<a href="http://www.xxx.com发生了什么？" target="_blank" rel="noopener">www.xxx.com发生了什么？</a></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- dns解析：将域名www。xxx。com解析成ip地址，首先从浏览器缓存找域名对应的ip，找不到的话会到hosts文件中找，接下来才到你配置的dns中找，找不到的话继续向它上级dns找，直到根dns，还是没找到的话就报错，寻找dns一般用udp协议</span><br><span class="line">- 本质通过socket进行通信</span><br><span class="line">- 请求到达框架，按照django请求生命周期走...</span><br></pre></td></tr></table></figure>
 
 <h3 id="2-http和https的区别？"><a href="#2-http和https的区别？" class="headerlink" title="2.http和https的区别？"></a>2.http和https的区别？</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http:默认端口  80</span><br><span class="line">https:默认端口 443</span><br><span class="line"></span><br><span class="line">http的数据是基于明文传输 不安全 被中间人截获没有隐私可言</span><br><span class="line">https的数据是基于密文传输 较为安全 被中间人截获之后也只能得到密文</span><br></pre></td></tr></table></figure>
@@ -289,6 +303,8 @@
 </li>
 </ol>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NewArticleSerializer</span><span class="params">(serializers.ModelSerializer)</span>:</span></span><br><span class="line">	tag_info = serializers.SerializerMethodField()</span><br><span class="line">   	<span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">   		model = models.Article</span><br><span class="line">   		fields = [<span class="string">'title'</span>,<span class="string">'summary'</span>,<span class="string">'tag_info'</span>]</span><br><span class="line">   	</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get_tag_info</span><span class="params">(self,obj)</span>:</span></span><br><span class="line">		<span class="keyword">return</span> [row <span class="keyword">for</span> row <span class="keyword">in</span> obj.tag.all().values(<span class="string">'id'</span>,<span class="string">'title'</span>)]</span><br><span class="line">   </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FormNewArticleSerializer</span><span class="params">(serializers.ModelSerializer)</span>:</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">   	model = models.Article</span><br><span class="line">   	fields = <span class="string">'__all__'</span></span><br></pre></td></tr></table></figure>
+
+
 
 
 
@@ -489,10 +505,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">restful</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
               </li>
              
@@ -502,6 +514,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">redis</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">单例模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -517,11 +537,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">drf,django</a>
+                <a href="javascript:void(0)" class="js-tag color3">restful</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">单例模式</a>
+                <a href="javascript:void(0)" class="js-tag color2">docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">drf,django</a>
               </li>
              
               <li class="article-tag-list-item">

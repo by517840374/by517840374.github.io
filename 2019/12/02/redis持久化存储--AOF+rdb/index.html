@@ -6,15 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives | github-blogs</title>
+  <title>redis持久化存储之AOF+RDB | github-blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="github-blogs">
-<meta property="og:url" content="http://yoursite.com/archives/page/2/index.html">
+  <meta name="description" content="Redis持久化存储之RDB">
+<meta name="keywords" content="linux,redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis持久化存储之AOF+RDB">
+<meta property="og:url" content="http://yoursite.com/2019/12/02/redis持久化存储--AOF+rdb/index.html">
 <meta property="og:site_name" content="github-blogs">
+<meta property="og:description" content="Redis持久化存储之RDB">
 <meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-12-23T10:11:13.918Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="github-blogs">
+<meta name="twitter:title" content="redis持久化存储之AOF+RDB">
+<meta name="twitter:description" content="Redis持久化存储之RDB">
   
     <link rel="alternative" href="/atom.xml" title="github-blogs" type="application/atom+xml">
   
@@ -148,208 +153,105 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-redis持久化存储--AOF+rdb" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      redis持久化存储之AOF+RDB
+    </h1>
+  
+
+        
+        <a href="/2019/12/02/redis持久化存储--AOF+rdb/" class="archive-article-date">
+  	<time datetime="2019-12-02T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-02</time>
+</a>
+        <!-- 开始添加字数统计 -->
+		
+          <div style="margin-top:10px;">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">854字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">3分</span>
+      </span>
+    </span>
+</div>
+          
+		<!-- 添加完成 -->
+		
+		
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Redis持久化存储之RDB"><a href="#Redis持久化存储之RDB" class="headerlink" title="Redis持久化存储之RDB"></a>Redis持久化存储之RDB</h3><a id="more"></a>
+
+<h4 id="0x01-配置redis-conf文件"><a href="#0x01-配置redis-conf文件" class="headerlink" title="0x01 配置redis.conf文件"></a>0x01 配置redis.conf文件</h4><blockquote>
+<p><code>redis</code>提供了<code>RDB持久化</code>的功能，这个功能可以将<code>redis</code>在内存中的的状态保存到硬盘中，它可以<strong>手动执行。</strong></p>
+<p>也可以再<code>redis.conf</code>中配置，<strong>定期执行</strong>。</p>
+<p>RDB持久化产生的RDB文件是一个<strong>经过压缩</strong>的<strong>二进制文件</strong>，这个文件被保存在硬盘中，redis可以通过这个文件还原数据库当时的状态。</p>
+</blockquote>
+<blockquote>
+<p>RDB(持久化)<br>内存数据保存到磁盘<br>在指定的时间间隔内生成数据集的时间点快照（point-in-time snapshot）<br>优点：速度快，适合做备份，主从复制就是基于RDB持久化功能实现<br>rdb通过再redis中使用save命令触发 rdb</p>
+</blockquote>
+<p>文件名字可以随便取，只要到时候指定该名称就行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">daemonize yes </span><br><span class="line">#后台运行 </span><br><span class="line">port 6379 	</span><br><span class="line">#指定端口 </span><br><span class="line">logfile /data/6379/redis.log	</span><br><span class="line">#指定日志路径</span><br><span class="line">dir /data/6379	</span><br><span class="line">#redis的数据文件，会存放在这里</span><br><span class="line">dbfilename  dbmp.rdb    	</span><br><span class="line">#   开启rdb持久化，且指定持久化文件的名字</span><br><span class="line">bind 0.0.0.0</span><br><span class="line">save 900 1 	  </span><br><span class="line">#定义触发rdb持久化的时间机制 </span><br><span class="line">save 300 10</span><br><span class="line">save 60  10000</span><br></pre></td></tr></table></figure>
+
+<h5 id="创建数据文件夹"><a href="#创建数据文件夹" class="headerlink" title="创建数据文件夹"></a>创建数据文件夹</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /data/6379</span><br></pre></td></tr></table></figure>
+
+<h5 id="指定rdb文件启动redis"><a href="#指定rdb文件启动redis" class="headerlink" title="指定rdb文件启动redis"></a>指定rdb文件启动redis</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server redis.conf</span><br></pre></td></tr></table></figure>
+
+<h5 id="登录redis-cli"><a href="#登录redis-cli" class="headerlink" title="登录redis-cli"></a>登录redis-cli</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set num 1</span><br><span class="line">save</span><br><span class="line">上面两步做完，会在data/6379中生成dbmp.rdb文件，此文件是二进制格式的</span><br></pre></td></tr></table></figure>
+
+<h3 id="Redis持久化存储之AOF"><a href="#Redis持久化存储之AOF" class="headerlink" title="Redis持久化存储之AOF"></a>Redis持久化存储之AOF</h3><blockquote>
+<p>AOF（append-only log file）<br>记录服务器执行的所有变更操作命令（例如set del等），并在服务器启动时，通过重新执行这些命令来还原数据集<br>AOF 文件中的命令全部以redis协议的格式保存，新命令追加到文件末尾。<br>优点：最大程序保证数据不丢<br>缺点：日志记录非常大</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-client   写入数据  &gt;  redis-server   同步命令   &gt;  AOF文件</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x00-配置参数"><a href="#0x00-配置参数" class="headerlink" title="0x00 配置参数"></a>0x00 配置参数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">AOF持久化配置，两条参数</span><br><span class="line"></span><br><span class="line">appendonly yes</span><br><span class="line">appendfsync  always    总是修改类的操作</span><br><span class="line">             everysec   每秒做一次持久化</span><br><span class="line">             no     依赖于系统自带的缓存大小机制</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x01-配置redis-conf文件-1"><a href="#0x01-配置redis-conf文件-1" class="headerlink" title="0x01 配置redis.conf文件"></a>0x01 配置redis.conf文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">daemonize yes</span><br><span class="line">port 6379</span><br><span class="line">logfile /data/6379/redis.log</span><br><span class="line">dir /data/6379</span><br><span class="line">appendonly yes  		 </span><br><span class="line">#开启aof的俩参数</span><br><span class="line">appendfsync everysec     </span><br><span class="line">#aof的持久化机制</span><br></pre></td></tr></table></figure>
+
+<h5 id="创建数据文件夹-1"><a href="#创建数据文件夹-1" class="headerlink" title="创建数据文件夹"></a>创建数据文件夹</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /data/6379</span><br></pre></td></tr></table></figure>
+
+<h5 id="指定aof文件启动"><a href="#指定aof文件启动" class="headerlink" title="指定aof文件启动"></a>指定aof文件启动</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server redis.conf</span><br></pre></td></tr></table></figure>
+
+<h5 id="登录redis-cli-写入数据，实时检查aof文件信息"><a href="#登录redis-cli-写入数据，实时检查aof文件信息" class="headerlink" title="登录redis-cli,写入数据，实时检查aof文件信息"></a>登录redis-cli,写入数据，实时检查aof文件信息</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tail -f /data1/6379/appendonly.aof</span><br></pre></td></tr></table></figure>
+
+<h3 id="redis-持久化方式有哪些？有什么区别？"><a href="#redis-持久化方式有哪些？有什么区别？" class="headerlink" title="redis 持久化方式有哪些？有什么区别？"></a>redis 持久化方式有哪些？有什么区别？</h3><h5 id="rdb：基于快照的持久化，速度更快，一般用作备份，主从复制也是依赖于rdb持久化功能"><a href="#rdb：基于快照的持久化，速度更快，一般用作备份，主从复制也是依赖于rdb持久化功能" class="headerlink" title="rdb：基于快照的持久化，速度更快，一般用作备份，主从复制也是依赖于rdb持久化功能"></a>rdb：基于快照的持久化，速度更快，一般用作备份，主从复制也是依赖于rdb持久化功能</h5><h5 id="aof：以追加的方式记录redis操作日志的文件。可以最大程度的保证redis数据安全，类似于mysql的binlog"><a href="#aof：以追加的方式记录redis操作日志的文件。可以最大程度的保证redis数据安全，类似于mysql的binlog" class="headerlink" title="aof：以追加的方式记录redis操作日志的文件。可以最大程度的保证redis数据安全，类似于mysql的binlog"></a>aof：以追加的方式记录redis操作日志的文件。可以最大程度的保证redis数据安全，类似于mysql的binlog</h5><h3 id="面试题："><a href="#面试题：" class="headerlink" title="面试题："></a>面试题：</h3><h5 id="如何在不重启的情况下，将rdb持久化切换成aof持久化？"><a href="#如何在不重启的情况下，将rdb持久化切换成aof持久化？" class="headerlink" title="如何在不重启的情况下，将rdb持久化切换成aof持久化？"></a>如何在不重启的情况下，将rdb持久化切换成aof持久化？</h5><blockquote>
+<ol>
+<li><p>准备一个rdb的redis数据库</p>
+</li>
+<li><p>通过命令直接切换aof</p>
+<p>127.0.0.1:6379&gt; CONFIG set appendonly yes   #开启AOF功能<br>OK<br>127.0.0.1:6379&gt; CONFIG SET save “”  #关闭RDB功能<br>OK</p>
+</li>
+<li><p>正确情况下，会生成aof日志文件了，此时命令操作都是在aof里面了</p>
+</li>
+<li><p>还得修改配置文件，以上命令只是临时生效，改完以后，下次指定配置文件启动，就一直是aof了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt;    port 6379</span><br><span class="line">&gt;    logfile /data/6379/redis.log</span><br><span class="line">&gt;    dir /data/6379</span><br><span class="line">&gt;    dbfilename  dbmp.rdb</span><br><span class="line">&gt;    save 900 1</span><br><span class="line">&gt;    save 300 10</span><br><span class="line">&gt;    save 60  10000</span><br><span class="line">&gt;    daemonize yes</span><br><span class="line">&gt;    appendonly yes  </span><br><span class="line">&gt;    appendfsync everysec     </span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/22/sqlhelper文件引入单例模式/" class="archive-article-date">
-  	<time datetime="2019-11-22T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/22/sqlhelper文件引入单例模式/">SqlHelper--单例模式</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">单例模式</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/22/LocalStack和Local对象实现栈的管理/" class="archive-article-date">
-  	<time datetime="2019-11-22T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/22/LocalStack和Local对象实现栈的管理/">flask剖析第四说--LocalStack和Local对象实现栈的管理</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">flask</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/22/flask剖析第一说--werkzurg了解wsgi/" class="archive-article-date">
-  	<time datetime="2019-11-22T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/22/flask剖析第一说--werkzurg了解wsgi/">flask剖析第一说--通过werkzurg了解wsgi</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">flask</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/22/drf源码分析第八说----Jwt认证/" class="archive-article-date">
-  	<time datetime="2019-11-22T12:33:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/22/drf源码分析第八说----Jwt认证/">drf源码分析第八说 -- Jwt认证</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">drf</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/22/linux--编译安装python/" class="archive-article-date">
-  	<time datetime="2019-11-22T12:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/22/linux--编译安装python/">linux--虚拟环境搭建python-django项目</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -359,234 +261,69 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">虚拟环境</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/22/git/" class="archive-article-date">
-  	<time datetime="2019-11-22T10:00:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/2019/12/07/docker/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          docker全部知识点总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/11/25/websocket/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">通过django+channels+websocket实现网络聊天室</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/22/git/">git工具的使用</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技术</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/20/面试题库/" class="archive-article-date">
-  	<time datetime="2019-11-20T11:22:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-20</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/20/面试题库/">面试集锦</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/20/drf总结草稿/" class="archive-article-date">
-  	<time datetime="2019-11-20T09:51:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-20</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/20/drf总结草稿/">drf总结草稿</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">drf,django</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/19/drf源码分析第六说----权限/" class="archive-article-date">
-  	<time datetime="2019-11-19T13:51:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-19</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/19/drf源码分析第六说----权限/">drf源码分析第六说 -- 权限</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">drf</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/11/19/drf源码分析第七说----节流/" class="archive-article-date">
-  	<time datetime="2019-11-19T12:42:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-19</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/11/19/drf源码分析第七说----节流/">drf源码分析第七说 -- 节流/频率限制</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">drf</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">django</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/3/">Next &raquo;</a>
-    </nav>
   
 
 
@@ -617,8 +354,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

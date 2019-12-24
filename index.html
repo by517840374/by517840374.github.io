@@ -296,6 +296,292 @@
 
 
   
+    <article id="post-docker" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/12/07/docker/">docker全部知识点总结</a>
+    </h1>
+  
+
+        
+        <a href="/2019/12/07/docker/" class="archive-article-date">
+  	<time datetime="2019-12-07T13:00:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-07</time>
+</a>
+        <!-- 开始添加字数统计 -->
+		
+          <div style="margin-top:10px;">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">2.1k字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">9分</span>
+      </span>
+    </span>
+</div>
+          
+		<!-- 添加完成 -->
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="docker的三大生命周期"><a href="#docker的三大生命周期" class="headerlink" title="docker的三大生命周期"></a>docker的三大生命周期</h4><p>镜像文件 –&gt; docker容器示例 –&gt; 镜像文件放入dockerhub仓库托管</p>
+<h4 id="docker加速器"><a href="#docker加速器" class="headerlink" title="docker加速器"></a>docker加速器</h4><p>Docker镜像加速器</p>
+<h5 id="执行命令"><a href="#执行命令" class="headerlink" title="执行命令"></a>执行命令</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://f1361db2.m.daocloud.io</span><br></pre></td></tr></table></figure>
+
+<h5 id="把得到的字典放到-etc-docker-daemon-json中"><a href="#把得到的字典放到-etc-docker-daemon-json中" class="headerlink" title="把得到的字典放到/etc/docker/daemon.json中"></a>把得到的字典放到/etc/docker/daemon.json中</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;registry-mirrors&quot;: [&quot;http://f1361db2.m.daocloud.io&quot;]&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="docker的增删改查命令"><a href="#docker的增删改查命令" class="headerlink" title="docker的增删改查命令"></a>docker的增删改查命令</h4><h5 id="增"><a href="#增" class="headerlink" title="增"></a>增</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull centos # 默认取dockerhub下载一个centos镜像文件</span><br><span class="line">docker pull hello-world # 下载镜像</span><br><span class="line">docker run 镜像id # 运行镜像，生成容器，并且检查镜像是否存在，不存在自动docker Pull</span><br></pre></td></tr></table></figure>
+
+<h6 id="运行centos容器，并且进入这个容器空间"><a href="#运行centos容器，并且进入这个容器空间" class="headerlink" title="运行centos容器，并且进入这个容器空间"></a>运行centos容器，并且进入这个容器空间</h6><p>docker run -it centos /bin/bash</p>
+<ul>
+<li>-i 是交互式的操作</li>
+<li>-t 是开启一个终端</li>
+</ul>
+<h6 id="下载一个ubuntu镜像，且进入这个ubuntu容器空间内"><a href="#下载一个ubuntu镜像，且进入这个ubuntu容器空间内" class="headerlink" title="下载一个ubuntu镜像，且进入这个ubuntu容器空间内"></a>下载一个ubuntu镜像，且进入这个ubuntu容器空间内</h6><p>docker run -it ubuntu /bin/bash</p>
+<h6 id="进入镜像更改之后提交"><a href="#进入镜像更改之后提交" class="headerlink" title="进入镜像更改之后提交"></a>进入镜像更改之后提交</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run -it centos /bin/bash</span><br><span class="line">yum install vim # 安装好vim后</span><br><span class="line">exit</span><br><span class="line">docker commit 容器id 新的镜像名</span><br></pre></td></tr></table></figure>
+
+<h6 id="导出本地的docker镜像"><a href="#导出本地的docker镜像" class="headerlink" title="导出本地的docker镜像"></a>导出本地的docker镜像</h6><p><strong>docker save imageid(类似于0f3e07c0138f，输入docker images即可看到想要打包的image id) &gt; 镜像压缩文件</strong></p>
+<h6 id="导入docker镜像文件"><a href="#导入docker镜像文件" class="headerlink" title="导入docker镜像文件"></a>导入docker镜像文件</h6><p><strong>docker load &lt; 镜像压缩文件</strong></p>
+<h6 id="运行一个活着的容器"><a href="#运行一个活着的容器" class="headerlink" title="运行一个活着的容器"></a>运行一个活着的容器</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run -d centos /bin/sh -c &quot;while true:do echo 你看这个灯，它又大又亮;sleep 1;done&quot;</span><br><span class="line">    -d 后台运行</span><br><span class="line">    /bin/sh Linux的shell解释器</span><br><span class="line">    -c 指定一段shell脚本</span><br></pre></td></tr></table></figure>
+
+<h6 id="运行一个web程序，在容器中，要对外进行端口暴露"><a href="#运行一个web程序，在容器中，要对外进行端口暴露" class="headerlink" title="运行一个web程序，在容器中，要对外进行端口暴露"></a>运行一个web程序，在容器中，要对外进行端口暴露</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 8090:5000 training/webapp python app.py</span><br><span class="line">	-d 后台运行</span><br><span class="line">	-p 指定端口映射 宿主机的8090映射到容器内的5000(宿主机的端口你可以自由定义，容器的端口根据代码决定)</span><br><span class="line">	-P(大写) 随机端口映射，宿主机会随机生成一个端口，映射到容器的5000</span><br></pre></td></tr></table></figure>
+
+<h6 id="暂停一个正在运行的容器记录"><a href="#暂停一个正在运行的容器记录" class="headerlink" title="暂停一个正在运行的容器记录"></a>暂停一个正在运行的容器记录</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop 容器id</span><br></pre></td></tr></table></figure>
+
+<h6 id="再次运行一个容器"><a href="#再次运行一个容器" class="headerlink" title="再次运行一个容器"></a>再次运行一个容器</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker start 容器id</span><br></pre></td></tr></table></figure>
+
+<h6 id="docker容器挂掉后，数据会丢吗"><a href="#docker容器挂掉后，数据会丢吗" class="headerlink" title="docker容器挂掉后，数据会丢吗"></a>docker容器挂掉后，数据会丢吗</h6><blockquote>
+<p>不会，docker容器挂掉后，可以通过docker ps -a 看到容器记录，不会释放，容器记录删掉后，数据就释放了</p>
+</blockquote>
+<h5 id="删"><a href="#删" class="headerlink" title="删"></a>删</h5><blockquote>
+<p>docker   rmi  镜像id前三位即可 #删除镜像，必须清除所有的容器记录依赖<br>docker rm   容器id  #删除容器记录，必须是挂掉的记录才能删除<br>docker  rm  <code>docker ps -aq</code>  #批量删除容器记录<br>docker rmi  <code>docker images -aq</code>  #批量删除镜像记录 </p>
+</blockquote>
+<h5 id="改"><a href="#改" class="headerlink" title="改"></a>改</h5><h6 id="修改docker镜像的名字"><a href="#修改docker镜像的名字" class="headerlink" title="修改docker镜像的名字"></a>修改docker镜像的名字</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker tag 镜像id 新的镜像名</span><br></pre></td></tr></table></figure>
+
+<h5 id="查"><a href="#查" class="headerlink" title="查"></a>查</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker search centos # 搜索centos相关的镜像</span><br><span class="line">docker image ls # 查看机器上所有的镜像</span><br><span class="line">docker images # 同上</span><br><span class="line">docker ps # 查看正在运行的docker容器(必须有一个进程在容器中，后台运行，这个容器才不会挂掉)</span><br><span class="line">docker ps -a # 查看所有运行过的容器记录(挂掉的，和正在运行的记录)</span><br><span class="line"></span><br><span class="line">docker logs 容器id/容器名 # 查看容器内所有的日志</span><br></pre></td></tr></table></figure>
+
+<h6 id="如何进入一个活着-正在运行-的容器"><a href="#如何进入一个活着-正在运行-的容器" class="headerlink" title="如何进入一个活着(正在运行)的容器"></a>如何进入一个活着(正在运行)的容器</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it 容器id /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h6 id="查看docker的端口转发情况"><a href="#查看docker的端口转发情况" class="headerlink" title="查看docker的端口转发情况"></a>查看docker的端口转发情况</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker port 容器id</span><br></pre></td></tr></table></figure>
+
+<h3 id="自己制作镜像"><a href="#自己制作镜像" class="headerlink" title="自己制作镜像"></a>自己制作镜像</h3><h4 id="构建镜像"><a href="#构建镜像" class="headerlink" title="构建镜像"></a>构建镜像</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build . -f ./Dockerfile -t my-helloworld:20191110</span><br></pre></td></tr></table></figure>
+
+<h4 id="dockerfile"><a href="#dockerfile" class="headerlink" title="dockerfile"></a>dockerfile</h4><blockquote>
+<p>dockerfile是全大写的</p>
+</blockquote>
+<h4 id="dockerfile的学习"><a href="#dockerfile的学习" class="headerlink" title="dockerfile的学习"></a>dockerfile的学习</h4><p><strong>FROM指定基础镜像，必须为第一个命令</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">格式：</span><br><span class="line">	FROM &lt;image&gt;</span><br><span class="line">	FROM &lt;image&gt;:&lt;tag&gt;</span><br><span class="line">示例:</span><br><span class="line">	FROM mysql:5.6</span><br><span class="line">注意:</span><br><span class="line">	tag是可选的，如果不使用tag时，会使用latest版本的基础镜像</span><br><span class="line">	</span><br><span class="line">FROM scratch # 制作base image基础镜像，尽量使用官方的image作为base image</span><br><span class="line">FROM centos # 使用base image</span><br><span class="line">FROM ubuntu:14.04 # 带有tag的base image</span><br><span class="line"># FROM指令，是指定你的docker镜像以哪一个操作系统为基础去运行</span><br></pre></td></tr></table></figure>
+
+<p><strong>MAINTAINER 镜像维护者的信息</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">格式:</span><br><span class="line">	MAINTAINER &lt;name&gt;</span><br><span class="line">示例:</span><br><span class="line">	MAINTAINER Yongxin Li</span><br><span class="line">	MAINTAINER inspur_lyx@hotmail.com</span><br><span class="line">	MAINTAINER Yongxin Li &lt;inspur_lyx@hotmail.com&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>COPY|ADD 添加本地文件到镜像中</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ADD与COPY</span><br><span class="line"> - 优先使用COPY命令</span><br><span class="line"> - ADD除了COPY功能还有解压功能</span><br><span class="line">添加远程文件/目录使用curl或wget</span><br><span class="line">格式:</span><br><span class="line">	COPY &lt;src&gt;... &lt;dest&gt;</span><br><span class="line">示例:</span><br><span class="line">	ADD hom* /mydir/ # 添加所有以&quot;hom&quot;开头的文件</span><br><span class="line">	ADD test relativeDir/ # 添加&quot;test&quot;到`WORKDIR`/relativeDir/</span><br><span class="line">	ADD test /absoluteDir/ # 添加&quot;test&quot;到/absoluteDir/</span><br></pre></td></tr></table></figure>
+
+<p><strong>RUN 构建镜像过程中执行命令</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#对于复杂的RUN命令，避免无用的分层，多条命令用反斜线换行，合成一条命令！</span><br><span class="line">RUN yum update &amp;&amp; yum install -y vim \</span><br><span class="line">    Python-dev #反斜线换行</span><br><span class="line">RUN /bin/bash -c &quot;source $HOME/.bashrc;echo $HOME”</span><br><span class="line"># RUN指令是一个完成指令，你写什么就运行什么</span><br><span class="line">格式:</span><br><span class="line">	RUN &lt;command&gt;</span><br><span class="line">示例:</span><br><span class="line">	RUN yum install nginx</span><br><span class="line">	RUN pip install django</span><br><span class="line">	RUN mkdir test &amp;&amp; rm -rf /var/lib/unusedfiles</span><br><span class="line">注意:</span><br><span class="line">	RUN指令创建的中间镜像会被缓存，并会在下次构建中使用。如果不想使用这些缓存镜像，可以在构建时指定--no-cache参数，如：docker build --no-cache</span><br></pre></td></tr></table></figure>
+
+<p><strong>CMD 构建容器后调用，也就是在容器启动时才进行调用</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">格式：</span><br><span class="line">	CMD [&quot;executable&quot;,&quot;param1&quot;,&quot;param2&quot;] (执行可执行文件，优先)</span><br><span class="line">	CMD [&apos;param1&apos;,&apos;param2&apos;] (设置了ENTRYPOINT，则直接调用ENTRYPOINT添加参数)</span><br><span class="line">	CMD command param1 param2 (执行shell内部命令)</span><br><span class="line">示例：</span><br><span class="line">	CMD [&apos;/usr/bin/wc&apos;,&apos;--help&apos;]</span><br><span class="line">	CMD ping www.baidu.com</span><br><span class="line">注意:</span><br><span class="line">	CMDu不同于RUN，CMD用于指定在容器启动时所要执行的命令，而RUN用于指定镜像构建时所要执行的命令</span><br></pre></td></tr></table></figure>
+
+<p><strong>ENTRYPOINT 设置容器初始化命令，使其可执行化</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">格式:</span><br><span class="line">	ENTRYPOINT [&apos;executable&apos;,&apos;param1&apos;,&apos;param2&apos;](可执行文件，优先)</span><br><span class="line">	ENTRYPOINT command param1 param2 (shell内部命令)</span><br><span class="line">示例:</span><br><span class="line">	ENTRYPOINT [&apos;/usr/bin/wc&apos;,&apos;--help&apos;]</span><br><span class="line">注意:</span><br><span class="line">	ENTRYPOINT与CMD非常类似，不同的是通过docker run执行的 命令不会覆盖ENTRYPOINT，而docker run命令中指定的任何参数， 都会被当做参数再次传递给ENTRYPOINT。Dockerfile中只允许有一 个ENTRYPOINT命令，多指定时会覆盖前面的设置，而只执行最后的 ENTRYPOINT指令</span><br></pre></td></tr></table></figure>
+
+<p><strong>ENV</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 环境变量，尽可能使用ENV增加可维护性</span><br><span class="line">格式:</span><br><span class="line">	ENV &lt;key&gt; &lt;value&gt;</span><br><span class="line">	ENV &lt;key&gt;=&lt;value&gt;</span><br><span class="line">示例:</span><br><span class="line">	ENV myName John</span><br><span class="line">	ENV myCat=fluffy</span><br><span class="line">	ENV MYSQL_VERSION 5.6 # 设置一个mysql常量</span><br><span class="line">	RUN yum install -y mysql-server=&quot;$&#123;MYSQL_VERSION&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>EXPOSE</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">格式:</span><br><span class="line">	EXPOSE &lt;port&gt; [&lt;port&gt;...]</span><br><span class="line">示例:</span><br><span class="line">	EXPOSE 80 443 </span><br><span class="line">	EXPOSE 8080</span><br><span class="line">	EXPOSE 11211/tcp 11211/udp</span><br><span class="line">注意:</span><br><span class="line">	EXPOSE并不会让容器的端口访问到主机。要使其可访问，需要在docker run运行容器时通过-p来发布这些端口，或通过-P参数来发布EXPOSE导出的所有端口</span><br></pre></td></tr></table></figure>
+
+<p><strong>VOLUME</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">格式:</span><br><span class="line">	VOLUME [&quot;/path/to/dir&quot;]</span><br><span class="line">示例:</span><br><span class="line">	VOLUME [&quot;/data&quot;]</span><br><span class="line">	VOLUME [&quot;/var/www&quot;, &quot;/var/log/apache2&quot;,&quot;/etc/apache2&quot;]</span><br></pre></td></tr></table></figure>
+
+<h5 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"># This my first django Dockerfile </span><br><span class="line"># Version 1.0 </span><br><span class="line"># Base images 基础镜像</span><br><span class="line">FROM centos:centos7.5.1804</span><br><span class="line"></span><br><span class="line"># MAINTAINER 维护者信息</span><br><span class="line">LABEL maintainer=&apos;admin@by517840374.com&apos;</span><br><span class="line"></span><br><span class="line"># ENV 设置环境变量</span><br><span class="line">ENV VERSION v1.0</span><br><span class="line"></span><br><span class="line"># RUN 执行以下命令</span><br><span class="line">RUN yum install -y wget</span><br><span class="line">RUN wget -P /etc/yum.repos.d/http://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line">RUN yum install -y python36 python3-devel gcc</span><br><span class="line"></span><br><span class="line"># 工作目录</span><br><span class="line">WORKDIR /opt</span><br><span class="line"></span><br><span class="line"># 拷贝文件至工作目录</span><br><span class="line">COPY . /opt</span><br><span class="line"></span><br><span class="line">RUN pip3 install -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com Django==2.1.8</span><br><span class="line"></span><br><span class="line">RUN rm -rf ~/.cache/pip</span><br><span class="line"></span><br><span class="line">#EXPOSE 映射端口</span><br><span class="line">EXPOSE 8000</span><br><span class="line"></span><br><span class="line"># 容器启动时执行命令</span><br><span class="line">CMD [&quot;Python3&quot;, &quot;manage.py&quot;, &quot;runserver&quot;, &quot;0.0.0.0:8000&quot;]</span><br></pre></td></tr></table></figure>
+
+<h5 id="推送镜像"><a href="#推送镜像" class="headerlink" title="推送镜像"></a>推送镜像</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker build . -f Dockerfile -t my-helloworld:20191110</span><br><span class="line">docker tag my-helloworld:20191110 xiaorenwu/my-helloworld:20191110</span><br><span class="line"># docker push xiaorenwu/my-helloworld:20191110</span><br><span class="line">docker run --name helloworld -d -p 8000:8000 my-helloworld:20191110</span><br></pre></td></tr></table></figure>
+
+<h4 id="自定义镜像流程"><a href="#自定义镜像流程" class="headerlink" title="自定义镜像流程"></a>自定义镜像流程</h4><p><strong>自定义一个flask的Dockerfile，构建一个运行flask程序的docker镜像</strong></p>
+<h6 id="0x01-准备flask的代码"><a href="#0x01-准备flask的代码" class="headerlink" title="0x01 准备flask的代码"></a>0x01 准备flask的代码</h6><blockquote>
+<p>[root@localhost]# cat f3c.py</p>
+<p>#coding:utf8<br>from flask import Flask<br>app=Flask(<strong>name</strong>)<br>@app.route(‘/‘)<br>def hello():<br>    return “今天是个好日子!”<br>if __name__==”__main__&quot;:<br>    app.run(host=’0.0.0.0’,port=8080)</p>
+</blockquote>
+<h6 id="0x02-编写Dockerfile，必须叫这个名字，这个dockerfile作用就是运行这个flask代码"><a href="#0x02-编写Dockerfile，必须叫这个名字，这个dockerfile作用就是运行这个flask代码" class="headerlink" title="0x02 编写Dockerfile，必须叫这个名字，这个dockerfile作用就是运行这个flask代码"></a>0x02 编写Dockerfile，必须叫这个名字，这个dockerfile作用就是运行这个flask代码</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 注意，注释不要和语句同一行</span><br><span class="line">FROM python </span><br><span class="line"># 指定以python为基础镜像，它提供了python3</span><br><span class="line">RUN pip3 install flask </span><br><span class="line">#在容器内安装flask</span><br><span class="line">ADD f3c.py /tmp/ </span><br><span class="line"># 添加代码到容器中</span><br><span class="line">WORKDIR /tmp/ </span><br><span class="line"># 切换工作目录</span><br><span class="line">CMD [&apos;python&apos;,&apos;f3c.py&apos;] </span><br><span class="line"># 通过CMD指令，让容器运行命令，是python f3c.py</span><br></pre></td></tr></table></figure>
+
+<h6 id="0x03-需要准备的文件如下"><a href="#0x03-需要准备的文件如下" class="headerlink" title="0x03 需要准备的文件如下"></a>0x03 需要准备的文件如下</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost]# ls</span><br><span class="line"></span><br><span class="line">Dockerfile f3c.py</span><br></pre></td></tr></table></figure>
+
+<h6 id="0x04-执行构建命令"><a href="#0x04-执行构建命令" class="headerlink" title="0x04 执行构建命令"></a>0x04 执行构建命令</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build .</span><br></pre></td></tr></table></figure>
+
+<h6 id="0x05-执行镜像文件，生成容器示例"><a href="#0x05-执行镜像文件，生成容器示例" class="headerlink" title="0x05 执行镜像文件，生成容器示例"></a>0x05 执行镜像文件，生成容器示例</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -d  -p 9999:8080  5e7</span><br><span class="line">0ef14b34014a1a64972cb7a8b9ad0e3a8511cb2927069220c6ae981dc5cd4168</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">docker</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/12/07/docker/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-redis持久化存储--AOF+rdb" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/12/02/redis持久化存储--AOF+rdb/">redis持久化存储之AOF+RDB</a>
+    </h1>
+  
+
+        
+        <a href="/2019/12/02/redis持久化存储--AOF+rdb/" class="archive-article-date">
+  	<time datetime="2019-12-02T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-02</time>
+</a>
+        <!-- 开始添加字数统计 -->
+		
+          <div style="margin-top:10px;">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">854字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">3分</span>
+      </span>
+    </span>
+</div>
+          
+		<!-- 添加完成 -->
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Redis持久化存储之RDB"><a href="#Redis持久化存储之RDB" class="headerlink" title="Redis持久化存储之RDB"></a>Redis持久化存储之RDB</h3>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/12/02/redis持久化存储--AOF+rdb/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-websocket" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -506,19 +792,19 @@
 
 
   
-    <article id="post-LocalStack和Local对象实现栈的管理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-flask剖析第二说--快速使用flask" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/11/22/LocalStack和Local对象实现栈的管理/">flask剖析第四说--LocalStack和Local对象实现栈的管理</a>
+      <a class="article-title" href="/2019/11/22/flask剖析第二说--快速使用flask/">flask剖析第二说--快速使用flask</a>
     </h1>
   
 
         
-        <a href="/2019/11/22/LocalStack和Local对象实现栈的管理/" class="archive-article-date">
+        <a href="/2019/11/22/flask剖析第二说--快速使用flask/" class="archive-article-date">
   	<time datetime="2019-11-22T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
 </a>
         <!-- 开始添加字数统计 -->
@@ -528,7 +814,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">4字</span>
+        <span class="post-count">2.4k字</span>
       </span>
     </span>
 
@@ -537,7 +823,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">1分</span>
+        <span class="post-count">12分</span>
       </span>
     </span>
 </div>
@@ -549,7 +835,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h4 id="LocalStack和Local对象"><a href="#LocalStack和Local对象" class="headerlink" title="LocalStack和Local对象"></a>LocalStack和Local对象</h4>
+        <blockquote>
+<p>快速使用flask</p>
+</blockquote>
         
       
 
@@ -577,108 +865,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/11/22/LocalStack和Local对象实现栈的管理/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-threading.local和高级方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/11/22/threading.local和高级方法/">flask剖析第三说--threading.local和高级方法</a>
-    </h1>
-  
-
-        
-        <a href="/2019/11/22/threading.local和高级方法/" class="archive-article-date">
-  	<time datetime="2019-11-22T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
-</a>
-        <!-- 开始添加字数统计 -->
-		
-          <div style="margin-top:10px;">
-    <span class="post-time">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-keyboard-o"></i>
-        <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">103字</span>
-      </span>
-    </span>
-
-    <span class="post-time">
-      &nbsp; | &nbsp;
-      <span class="post-meta-item-icon">
-        <i class="fa fa-hourglass-half"></i>
-        <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">1分</span>
-      </span>
-    </span>
-</div>
-          
-		<!-- 添加完成 -->
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="threading-local"><a href="#threading-local" class="headerlink" title="threading.local"></a>threading.local</h4>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">flask</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/11/22/threading.local和高级方法/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/11/22/flask剖析第二说--快速使用flask/">展开全文 >></a>
         </p>
       
 
@@ -809,19 +996,19 @@
 
 
   
-    <article id="post-flask剖析第二说--快速使用flask" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-threading.local和高级方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/11/22/flask剖析第二说--快速使用flask/">flask剖析第二说--快速使用flask</a>
+      <a class="article-title" href="/2019/11/22/threading.local和高级方法/">flask剖析第三说--threading.local和高级方法</a>
     </h1>
   
 
         
-        <a href="/2019/11/22/flask剖析第二说--快速使用flask/" class="archive-article-date">
+        <a href="/2019/11/22/threading.local和高级方法/" class="archive-article-date">
   	<time datetime="2019-11-22T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
 </a>
         <!-- 开始添加字数统计 -->
@@ -831,110 +1018,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">2.4k字</span>
-      </span>
-    </span>
-
-    <span class="post-time">
-      &nbsp; | &nbsp;
-      <span class="post-meta-item-icon">
-        <i class="fa fa-hourglass-half"></i>
-        <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">12分</span>
-      </span>
-    </span>
-</div>
-          
-		<!-- 添加完成 -->
-		
-		
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>快速使用flask</p>
-</blockquote>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">flask</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/11/22/flask剖析第二说--快速使用flask/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-flask剖析第一说--werkzurg了解wsgi" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/11/22/flask剖析第一说--werkzurg了解wsgi/">flask剖析第一说--通过werkzurg了解wsgi</a>
-    </h1>
-  
-
-        
-        <a href="/2019/11/22/flask剖析第一说--werkzurg了解wsgi/" class="archive-article-date">
-  	<time datetime="2019-11-22T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
-</a>
-        <!-- 开始添加字数统计 -->
-		
-          <div style="margin-top:10px;">
-    <span class="post-time">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-keyboard-o"></i>
-        <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">86字</span>
+        <span class="post-count">103字</span>
       </span>
     </span>
 
@@ -955,9 +1039,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>通过webrz了解wsgi</p>
-</blockquote>
+        <h4 id="threading-local"><a href="#threading-local" class="headerlink" title="threading.local"></a>threading.local</h4>
         
       
 
@@ -985,7 +1067,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/11/22/flask剖析第一说--werkzurg了解wsgi/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/11/22/threading.local和高级方法/">展开全文 >></a>
         </p>
       
 
@@ -1015,19 +1097,19 @@
 
 
   
-    <article id="post-sqlhelper文件引入单例模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-flask剖析第五说--Flask源码之配置加载" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/11/22/sqlhelper文件引入单例模式/">SqlHelper--单例模式</a>
+      <a class="article-title" href="/2019/11/22/flask剖析第五说--Flask源码之配置加载/">flask剖析第五说--Flask源码之:配置加载</a>
     </h1>
   
 
         
-        <a href="/2019/11/22/sqlhelper文件引入单例模式/" class="archive-article-date">
+        <a href="/2019/11/22/flask剖析第五说--Flask源码之配置加载/" class="archive-article-date">
   	<time datetime="2019-11-22T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-22</time>
 </a>
         <!-- 开始添加字数统计 -->
@@ -1037,7 +1119,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">524字</span>
+        <span class="post-count">0字</span>
       </span>
     </span>
 
@@ -1046,7 +1128,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">2分</span>
+        <span class="post-count">1分</span>
       </span>
     </span>
 </div>
@@ -1058,9 +1140,6 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>文件引入的单例模式</p>
-</blockquote>
         
       
 
@@ -1078,7 +1157,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">单例模式</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">flask</a>
         		</li>
       		
 		</ul>
@@ -1088,7 +1167,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/11/22/sqlhelper文件引入单例模式/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/11/22/flask剖析第五说--Flask源码之配置加载/">展开全文 >></a>
         </p>
       
 
@@ -1243,10 +1322,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">restful</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
               </li>
              
@@ -1256,6 +1331,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">redis</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">单例模式</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1271,11 +1354,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">drf,django</a>
+                <a href="javascript:void(0)" class="js-tag color3">restful</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">单例模式</a>
+                <a href="javascript:void(0)" class="js-tag color2">docker</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">drf,django</a>
               </li>
              
               <li class="article-tag-list-item">
