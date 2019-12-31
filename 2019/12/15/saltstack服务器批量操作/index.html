@@ -6,16 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>timeline | github-blogs</title>
+  <title>saltstack日常学习 | github-blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="timeline">
-<meta property="og:url" content="http://yoursite.com/timeline/index.html">
+  <meta name="description" content="saltstack高级运维">
+<meta name="keywords" content="saltstack,linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="saltstack日常学习">
+<meta property="og:url" content="http://yoursite.com/2019/12/15/saltstack服务器批量操作/index.html">
 <meta property="og:site_name" content="github-blogs">
+<meta property="og:description" content="saltstack高级运维">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-21T08:41:39.516Z">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/1132884/201808/1132884-20180813093004906-1141972356.png">
+<meta property="og:updated_time" content="2019-12-30T15:20:19.359Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="timeline">
+<meta name="twitter:title" content="saltstack日常学习">
+<meta name="twitter:description" content="saltstack高级运维">
+<meta name="twitter:image" content="https://images2018.cnblogs.com/blog/1132884/201808/1132884-20180813093004906-1141972356.png">
   
     <link rel="alternative" href="/atom.xml" title="github-blogs" type="application/atom+xml">
   
@@ -149,20 +155,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="page-" class="article article-type-page " itemscope itemprop="blogPost">
+            <article id="post-saltstack服务器批量操作" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      timeline
+      saltstack日常学习
     </h1>
   
 
         
-        <a href="/timeline/index.html" class="archive-article-date">
-  	<time datetime="2019-11-21T08:41:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-21</time>
+        <a href="/2019/12/15/saltstack服务器批量操作/" class="archive-article-date">
+  	<time datetime="2019-12-15T13:01:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-15</time>
 </a>
         <!-- 开始添加字数统计 -->
 		
@@ -171,7 +177,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-keyboard-o"></i>
         <span class="post-meta-item-text">  字数统计: </span>
-        <span class="post-count">0字</span>
+        <span class="post-count">1.1k字</span>
       </span>
     </span>
 
@@ -180,7 +186,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-hourglass-half"></i>
         <span class="post-meta-item-text">  阅读时长: </span>
-        <span class="post-count">1分</span>
+        <span class="post-count">4分</span>
       </span>
     </span>
 </div>
@@ -192,7 +198,101 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h3 id="saltstack高级运维"><a href="#saltstack高级运维" class="headerlink" title="saltstack高级运维"></a>saltstack高级运维</h3><a id="more"></a>
+
+<h4 id="salt介绍"><a href="#salt介绍" class="headerlink" title="salt介绍"></a>salt介绍</h4><blockquote>
+<p>saltstack是由thomas Hatch于2011年创建的一个开源项目，设计初衷是为了实现一个快速的<strong>远程执行系统。</strong></p>
+</blockquote>
+<h4 id="saltstack的运行方式"><a href="#saltstack的运行方式" class="headerlink" title="saltstack的运行方式"></a>saltstack的运行方式</h4><blockquote>
+<ul>
+<li>Local 本地运行，交付管理</li>
+<li>Master/Minion &lt;&lt;&lt; 常用方式</li>
+<li>Salt SSH 不需要客户端</li>
+</ul>
+</blockquote>
+<h4 id="salt部署基本架构"><a href="#salt部署基本架构" class="headerlink" title="salt部署基本架构"></a>salt部署基本架构</h4><p>在安装salt之前，先理解salt架构中各个角色，主要区分是salt-master和salt-minion，顾名思义master是中心控制系统，minion是被管理的客户端。</p>
+<p>salt架构中的一种就是master &gt; minion。</p>
+<p><img src="https://images2018.cnblogs.com/blog/1132884/201808/1132884-20180813093004906-1141972356.png" alt></p>
+<p>在远程执行系统中，salt用python通过函数调用完成任务</p>
+<p>运行salt依赖包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">python</span><br><span class="line">zeromq</span><br><span class="line">pyzmp</span><br><span class="line">pycrypto</span><br><span class="line">msgpack-python</span><br><span class="line">yaml</span><br><span class="line">jinja2</span><br></pre></td></tr></table></figure>
+
+<p>解决依赖包最简单的办法就是用安装包管理器，yum工具</p>
+<h4 id="服务器环境准备"><a href="#服务器环境准备" class="headerlink" title="服务器环境准备"></a>服务器环境准备</h4><table>
+<thead>
+<tr>
+<th>服务器环境</th>
+<th>centos7(master)</th>
+<th>centos7(master)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ip地址</td>
+<td>192.168.178.131</td>
+<td>192.168.178.132</td>
+</tr>
+<tr>
+<td>身份</td>
+<td>master</td>
+<td>slave</td>
+</tr>
+<tr>
+<td>软件包</td>
+<td>salt-master</td>
+<td>salt-minion</td>
+</tr>
+</tbody></table>
+<h5 id="修改虚拟机ip地址为静态地址，并且确保可上网"><a href="#修改虚拟机ip地址为静态地址，并且确保可上网" class="headerlink" title="修改虚拟机ip地址为静态地址，并且确保可上网"></a>修改虚拟机ip地址为静态地址，并且确保可上网</h5><blockquote>
+<p>master网卡设置</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">TYPE=&quot;Ethernet&quot;</span><br><span class="line">PROXY_METHOD=&quot;none&quot;</span><br><span class="line">BROWSER_ONLY=&quot;no&quot;</span><br><span class="line">BOOTPROTO=&quot;static&quot;</span><br><span class="line">DEFROUTE=&quot;yes&quot;</span><br><span class="line">IPV4_FAILURE_FATAL=&quot;no&quot;</span><br><span class="line">IPV6INIT=&quot;yes&quot;</span><br><span class="line">IPV6_AUTOCONF=&quot;yes&quot;</span><br><span class="line">IPV6_DEFROUTE=&quot;yes&quot;</span><br><span class="line">IPV6_FAILURE_FATAL=&quot;no&quot;</span><br><span class="line">IPV6_ADDR_GEN_MODE=&quot;stable-privacy&quot;</span><br><span class="line">NAME=&quot;ens33&quot;</span><br><span class="line">UUID=&quot;7d4f9ede-810f-4976-a01b-250b845c99cc&quot;</span><br><span class="line">DEVICE=&quot;ens33&quot;</span><br><span class="line">ONBOOT=&quot;yes&quot;</span><br><span class="line">IPADDR=192.168.11.131</span><br><span class="line">NETMASK=255.255.255.0</span><br><span class="line">GATEWAY=192.168.11.1</span><br><span class="line">DNS1=119.29.29.29</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>slave网卡设置</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">TYPE=&quot;Ethernet&quot;</span><br><span class="line">PROXY_METHOD=&quot;none&quot;</span><br><span class="line">BROWSER_ONLY=&quot;no&quot;</span><br><span class="line">BOOTPROTO=&quot;static&quot;</span><br><span class="line">DEFROUTE=&quot;yes&quot;</span><br><span class="line">IPV4_FAILURE_FATAL=&quot;no&quot;</span><br><span class="line">IPV6INIT=&quot;yes&quot;</span><br><span class="line">IPV6_AUTOCONF=&quot;yes&quot;</span><br><span class="line">IPV6_DEFROUTE=&quot;yes&quot;</span><br><span class="line">IPV6_FAILURE_FATAL=&quot;no&quot;</span><br><span class="line">IPV6_ADDR_GEN_MODE=&quot;stable-privacy&quot;</span><br><span class="line">NAME=&quot;ens33&quot;</span><br><span class="line">UUID=&quot;f9fc5929-8594-466e-a041-34caee8c1e32&quot;</span><br><span class="line">DEVICE=&quot;ens33&quot;</span><br><span class="line">ONBOOT=&quot;yes&quot;</span><br><span class="line">IPADDR=192.168.11.132</span><br><span class="line">NETMASK=255.255.255.0</span><br><span class="line">GATEWAY=192.168.11.1</span><br><span class="line">DNS1=119.29.29.29</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>dns配置文件</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Generated by NetworkManager</span><br><span class="line">nameserver 119.29.29.29</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>/etc/hosts</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line">192.168.11.132  slave</span><br><span class="line">192.168.11.131  master</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>修改2台机器的主机名，用于主机名通信，加速salt的命令执行 </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hostnamectl set-hostname  master </span><br><span class="line">hostnamectl set-hostname  slave</span><br></pre></td></tr></table></figure>
+
+<h5 id="关闭服务器安全策略"><a href="#关闭服务器安全策略" class="headerlink" title="关闭服务器安全策略"></a>关闭服务器安全策略</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">关闭firewalld</span><br><span class="line">iptables -F # 情况防火墙规则</span><br><span class="line">systemctl disable firewalld</span><br><span class="line">systemctl stop firewalld</span><br><span class="line"></span><br><span class="line">关闭iptables</span><br><span class="line">iptables -F</span><br><span class="line"></span><br><span class="line">关闭selinux</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置好yum源之后，分别安装2个软件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install salt-master -y </span><br><span class="line"></span><br><span class="line">yum install  salt-minion -y</span><br></pre></td></tr></table></figure>
+
+<h5 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">salt-master的配置文件是/etc/salt/master</span><br><span class="line">salt-minion的配置文件是/etc/salt/minion</span><br><span class="line">配置文件中包含了大量可调整的参数，这些参数控制master和minion各个方面</span><br></pre></td></tr></table></figure>
+
+<p><strong>常用配置解析</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># salt运行的用户，影响到salt的执行权限</span></span><br><span class="line">user: root</span><br><span class="line"></span><br><span class="line"><span class="comment">#s alt的运行线程，开的线程越多一般处理的速度越快，但一般不要超过CPU的个数</span></span><br><span class="line">worker_threads: <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># master的管理端口</span></span><br><span class="line">publish_port : <span class="number">4505</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># master跟minion的通讯端口，用于文件服务，认证，接受返回结果等</span></span><br><span class="line">ret_port : <span class="number">4506</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果这个master运行的salt-syndic连接到了一个更高层级的master,那么这个参数需要配置成连接到的这个高层级master的监听端口</span></span><br><span class="line">syndic_master_port : <span class="number">4506</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定pid文件位置</span></span><br><span class="line">pidfile: /var/run/salt-master.pid</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>salt-master</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# grep -v ^# /etc/salt/master|grep -v ^$</span><br><span class="line">interface: 0.0.0.0  #绑定到本地的0.0.0.0地址</span><br><span class="line">publish_port: 4505　　#管理端口，命令发送</span><br><span class="line">user: root　　　　　　#运行salt进程的用户</span><br><span class="line">worker_threads: 5　　#salt运行线程数，线程越多处理速度越快，不要超过cpu个数</span><br><span class="line">ret_port: 4506　　#执行结果返回端口</span><br><span class="line">pidfile: /var/run/salt-master.pid #pid文件位置</span><br><span class="line">log_file: /var/log/salt/master　　#日志文件地址</span><br><span class="line"></span><br><span class="line">#自动接收minion的key</span><br><span class="line">auto_accept: False</span><br></pre></td></tr></table></figure>
+
+<p><strong>salt-minion常用配置</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"># minion的识别ID，可以是IP，域名，或是可以通过DNS解析的字符串</span><br><span class="line">id: slave</span><br><span class="line"> </span><br><span class="line"># salt运行的用户权限</span><br><span class="line">user: root</span><br><span class="line"> </span><br><span class="line"># master的识别ID，可以是IP，域名，或是可以通过DNS解析的字符串</span><br><span class="line">master : master</span><br><span class="line"> </span><br><span class="line"># master通信端口</span><br><span class="line">master_port: 4506</span><br><span class="line"> </span><br><span class="line"># 备份模式，minion是本地备份，当进行文件管理时的文件备份模式</span><br><span class="line">backup_mode: minion</span><br><span class="line"> </span><br><span class="line"># 执行salt-call时候的输出方式</span><br><span class="line">output: nested</span><br><span class="line"> </span><br><span class="line"># minion等待master接受认证的时间</span><br><span class="line">acceptance_wait_time: 10</span><br><span class="line"> </span><br><span class="line"># 失败重连次数，0表示无限次，非零会不断尝试到设置值后停止尝试</span><br><span class="line">acceptance_wait_time_max: 0</span><br><span class="line"> </span><br><span class="line"># 重新认证延迟时间，可以避免因为master的key改变导致minion需要重新认证的syn风暴</span><br><span class="line">random_reauth_delay: 60</span><br><span class="line"> </span><br><span class="line"># 日志文件位置</span><br><span class="line">log_file: /var/logs/salt_minion.log</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>salt-minion</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@slave ~]# grep -v ^# /etc/salt/minion|grep -v ^$</span><br><span class="line">master: master</span><br><span class="line">master_port: 4506</span><br><span class="line">user: root</span><br><span class="line">id: slave</span><br><span class="line">acceptance_wait_time: 10</span><br><span class="line">log_file: /var/log/salt/minion</span><br></pre></td></tr></table></figure>
+
+<h5 id="启动salt-master和salt-master"><a href="#启动salt-master和salt-master" class="headerlink" title="启动salt-master和salt-master"></a>启动salt-master和salt-master</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">systemctl start salt-minion</span><br><span class="line">systemctl start salt-master</span><br><span class="line"></span><br><span class="line">#检查salt状态</span><br><span class="line">systemctl status salt-minion</span><br><span class="line">systemctl status salt-master</span><br></pre></td></tr></table></figure>
+
+
       
 
       
@@ -200,6 +300,21 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">saltstack</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -211,6 +326,25 @@
 </article>
 
   
+<nav id="article-nav">
+  
+    <a href="/2019/12/15/nginx+uwsig+crm+mysql+virtualenv+supervisor/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          nginx+uwsig+crm+mysql+virtualenv+supervisor
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/12/12/RPC之远程过程调用/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">rpc远程调用</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -268,7 +402,7 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
