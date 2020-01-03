@@ -6,15 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2019/12 | github-blogs</title>
+  <title>django信号、缓存和读写分离 | github-blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="github-blogs">
-<meta property="og:url" content="http://yoursite.com/archives/2019/12/index.html">
+  <meta name="description" content="一、信号">
+<meta name="keywords" content="django">
+<meta property="og:type" content="article">
+<meta property="og:title" content="django信号、缓存和读写分离">
+<meta property="og:url" content="http://yoursite.com/2019/12/27/django信号、缓存和读写分离/index.html">
 <meta property="og:site_name" content="github-blogs">
+<meta property="og:description" content="一、信号">
 <meta property="og:locale" content="en">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/988061/201910/988061-20191031155724135-1774751752.png">
+<meta property="og:updated_time" content="2020-01-03T15:08:55.640Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="github-blogs">
+<meta name="twitter:title" content="django信号、缓存和读写分离">
+<meta name="twitter:description" content="一、信号">
+<meta name="twitter:image" content="https://img2018.cnblogs.com/blog/988061/201910/988061-20191031155724135-1774751752.png">
   
     <link rel="alternative" href="/atom.xml" title="github-blogs" type="application/atom+xml">
   
@@ -148,36 +155,175 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-django信号、缓存和读写分离" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/12/27/django信号、缓存和读写分离/" class="archive-article-date">
-  	<time datetime="2019-12-27T15:00:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-27</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/12/27/django信号、缓存和读写分离/">django信号、缓存和读写分离</a>
+    <h1 class="article-title" itemprop="name">
+      django信号、缓存和读写分离
     </h1>
   
 
-        <div class="article-info info-on-right">
+        
+        <a href="/2019/12/27/django信号、缓存和读写分离/" class="archive-article-date">
+  	<time datetime="2019-12-27T15:00:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-27</time>
+</a>
+        <!-- 开始添加字数统计 -->
+		
+          <div style="margin-top:10px;">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">3.3k字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">14分</span>
+      </span>
+    </span>
+</div>
           
+		<!-- 添加完成 -->
+		
+		
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="一、信号"><a href="#一、信号" class="headerlink" title="一、信号"></a>一、信号</h3><a id="more"></a>
+
+<blockquote>
+<p>Django中提供了“信号调度”，用于在框架执行操作时解耦。通俗来讲，就是一些动作发生的时候，信号允许特定的发送者去提醒一些接受者。</p>
+</blockquote>
+<h4 id="1-Django内置信号"><a href="#1-Django内置信号" class="headerlink" title="1. Django内置信号"></a>1. Django内置信号</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Model signals</span><br><span class="line">    pre_init                    <span class="comment"># django的model执行其构造方法前，自动触发</span></span><br><span class="line">    post_init                   <span class="comment"># django的model执行其构造方法后，自动触发</span></span><br><span class="line">    pre_save                    <span class="comment"># django的model对象保存前，自动触发，新增或者更新都是保存</span></span><br><span class="line">    post_save                   <span class="comment"># django的model对象保存后，自动触发</span></span><br><span class="line">    pre_delete                  <span class="comment"># django的model对象删除前，自动触发</span></span><br><span class="line">    post_delete                 <span class="comment"># django的model对象删除后，自动触发</span></span><br><span class="line">    m2m_changed                 <span class="comment"># django的model中使用m2m字段操作第三张表（add,remove,clear）前后，自动触发</span></span><br><span class="line">    class_prepared              <span class="comment"># 程序启动时，检测已注册的app中modal类，对于每一个类，自动触发</span></span><br><span class="line">Management signals</span><br><span class="line">    pre_migrate                 <span class="comment"># 执行migrate命令前，自动触发</span></span><br><span class="line">    post_migrate                <span class="comment"># 执行migrate命令后，自动触发</span></span><br><span class="line">Request/response signals</span><br><span class="line">    request_started             <span class="comment"># 请求到来前，自动触发</span></span><br><span class="line">    request_finished            <span class="comment"># 请求结束后，自动触发</span></span><br><span class="line">    got_request_exception       <span class="comment"># 请求异常后，自动触发</span></span><br><span class="line">Test signals</span><br><span class="line">    setting_changed             <span class="comment"># 使用test测试修改配置文件时，自动触发</span></span><br><span class="line">    template_rendered           <span class="comment"># 使用test测试渲染模板时，自动触发</span></span><br><span class="line">Database Wrappers</span><br><span class="line">    connection_created          <span class="comment"># 创建数据库连接时，自动触发</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>对于Django内置的信号，仅需注册指定信号，当程序执行相应操作时，自动触发注册函数：</p>
+<p>注册信号，写入与project同名的文件夹下的<em>init</em>.py文件(或者应用文件夹的<strong>init</strong>.py文件中或者views.py视图中)中，也是换数据库引擎的地方。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.core.signals <span class="keyword">import</span> request_finished</span><br><span class="line"><span class="keyword">from</span> django.core.signals <span class="keyword">import</span> request_started</span><br><span class="line"><span class="keyword">from</span> django.core.signals <span class="keyword">import</span> got_request_exception</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> django.db.models.signals <span class="keyword">import</span> class_prepared</span><br><span class="line"><span class="keyword">from</span> django.db.models.signals <span class="keyword">import</span> pre_init, post_init</span><br><span class="line"><span class="keyword">from</span> django.db.models.signals <span class="keyword">import</span> pre_save, post_save</span><br><span class="line"><span class="keyword">from</span> django.db.models.signals <span class="keyword">import</span> pre_delete, post_delete</span><br><span class="line"><span class="keyword">from</span> django.db.models.signals <span class="keyword">import</span> m2m_changed</span><br><span class="line"><span class="keyword">from</span> django.db.models.signals <span class="keyword">import</span> pre_migrate, post_migrate</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> django.test.signals <span class="keyword">import</span> setting_changed</span><br><span class="line"><span class="keyword">from</span> django.test.signals <span class="keyword">import</span> template_rendered</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> django.db.backends.signals <span class="keyword">import</span> connection_created</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">callback</span><span class="params">(sender, **kwargs)</span>:</span> <span class="comment">#sender表示信号触发者</span></span><br><span class="line">	print(<span class="string">"xxoo_callback"</span>)</span><br><span class="line">	print(sender,kwargs)</span><br><span class="line"></span><br><span class="line">	xxoo.connect(callback)</span><br><span class="line">	<span class="comment"># xxoo指上述导入的内容</span></span><br><span class="line">	例如：post_save.connect(callback)</span><br></pre></td></tr></table></figure>
+
+<p><strong>示例:</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_callback</span><span class="params">(sender, **kwargs)</span>:</span></span><br><span class="line">    print(<span class="string">"Request finished!"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法一：</span></span><br><span class="line">__init__.py</span><br><span class="line"><span class="keyword">from</span> django.db.models.signals <span class="keyword">import</span> pre_save,post_save</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_callback</span><span class="params">(sender, **kwargs)</span>:</span></span><br><span class="line">    print(<span class="string">"数据库保存数据执行我!"</span>)</span><br><span class="line">post_save.connect(my_callback)</span><br><span class="line"></span><br><span class="line">views.py 视图</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(sender,**kwargs)</span>:</span></span><br><span class="line">    models.Test.objects.create(title=<span class="string">"2342"</span>)</span><br><span class="line">    print(<span class="string">"xxxx"</span>)</span><br><span class="line">    <span class="keyword">return</span> HttpResponse(<span class="string">"ojbk"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法二：</span></span><br><span class="line">__init__.py</span><br><span class="line"><span class="keyword">from</span> django.core.signals <span class="keyword">import</span> request_finished</span><br><span class="line"><span class="keyword">from</span> django.dispatch <span class="keyword">import</span> receiver</span><br><span class="line"></span><br><span class="line"><span class="meta">@receiver(request_finished)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_callback</span><span class="params">(sender, **kwargs)</span>:</span></span><br><span class="line">    print(<span class="string">"Request finished!"</span>)</span><br><span class="line">    </span><br><span class="line">views.py 视图</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(sender,**kwargs)</span>:</span></span><br><span class="line">    models.Test.objects.create(title=<span class="string">"2342"</span>)</span><br><span class="line">    print(<span class="string">"xxxx"</span>)</span><br><span class="line">    <span class="keyword">return</span> HttpResponse(<span class="string">"ojbk"</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>指定发送者</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.db.models.signals <span class="keyword">import</span> pre_save</span><br><span class="line"><span class="keyword">from</span> django.dispatch <span class="keyword">import</span> receiver</span><br><span class="line"><span class="keyword">from</span> myapp.models <span class="keyword">import</span> MyModel </span><br><span class="line"><span class="comment">#注意：指定发送者的时候，不能写在项目或者应用的__init__.py文件中了，因为models文件的加载顺序在init文件之后，所以会报错，</span></span><br><span class="line"><span class="comment">#所以我一般用在views.py文件中,如果你创建了views文件夹，文件夹中创建了其他py文件来写逻辑，那么其他文件中写信号也是可以的</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@receiver(pre_save, sender=MyModel)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_handler</span><span class="params">(sender, **kwargs)</span>:</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-自定义信号"><a href="#2-自定义信号" class="headerlink" title="2. 自定义信号"></a>2. 自定义信号</h4><p>a. 定义信号</p>
+<p>在某py文件或者项目或者应用的<strong>init</strong>.py文件中定义信号。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> django.dispatch</span><br><span class="line">pizza_done = django.dispatch.Signal(providing_args=[<span class="string">"toppings"</span>, <span class="string">"size"</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment">#toppings和size这两个参数名称是随意取的昂，不是固定的，但是使用的时候关键字传餐的时候，要和这两个参数的名称对应好，可以通过设置参数来进行一个判断处理等操作</span></span><br></pre></td></tr></table></figure>
+
+<p>b. 注册信号</p>
+<p>在__init__.py中注册信号</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">callback</span><span class="params">(sender, **kwargs)</span>:</span></span><br><span class="line">    print(<span class="string">"callback"</span>)</span><br><span class="line">    print(sender,kwargs)</span><br><span class="line"> </span><br><span class="line">pizza_done.connect(callback)</span><br></pre></td></tr></table></figure>
+
+<p>c. 触发信号</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> 路径 <span class="keyword">import</span> pizza_done</span><br><span class="line"> </span><br><span class="line">pizza_done.send(sender=<span class="string">'seven'</span>,toppings=<span class="number">123</span>, size=<span class="number">456</span>)</span><br></pre></td></tr></table></figure>
+
+<p>由于内置信号的触发者已经集成到Django中，所以其会自动调用，而对于自定义信号则需要开发者在任意位置触发。</p>
+<p>更多：<a href="https://docs.djangoproject.com/en/1.11/topics/signals/" target="_blank" rel="noopener">猛击这里</a></p>
+<h3 id="二、缓存"><a href="#二、缓存" class="headerlink" title="二、缓存"></a>二、缓存</h3><blockquote>
+<p>由于Django是动态网站，所有每次请求均会去数据进行相应的操作，当程序访问量大时，耗时必然会更加明显，最简单解决方式是使用：缓存，缓存将一个某个views的返回值保存至内存或者memcache中，5分钟内再有人来访问时，则不再去执行view中的操作，而是直接从内存或者memcache中之前缓存的内容拿到，并返回。</p>
+</blockquote>
+<p>Django中提供了6种缓存方式：</p>
+<ul>
+<li>开发调试</li>
+<li>内存</li>
+<li>文件</li>
+<li>数据库</li>
+<li>Memcache缓存（python-memcached模块）</li>
+<li>Memcache缓存（pylibmc模块）</li>
+</ul>
+<h4 id="1-配置"><a href="#1-配置" class="headerlink" title="1. 配置"></a>1. 配置</h4><p><strong>a. 开发调试(了解即可)</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 此为开始调试用，实际内部不做任何操作</span></span><br><span class="line">    <span class="comment"># 配置：</span></span><br><span class="line">        CACHES = &#123;</span><br><span class="line">            <span class="string">'default'</span>: &#123;</span><br><span class="line">                <span class="string">'BACKEND'</span>: <span class="string">'django.core.cache.backends.dummy.DummyCache'</span>,     <span class="comment"># 引擎</span></span><br><span class="line">                <span class="string">'TIMEOUT'</span>: <span class="number">300</span>,                                               <span class="comment"># 缓存超时时间（默认300，None表示永不过期，0表示立即过期）</span></span><br><span class="line">                <span class="string">'OPTIONS'</span>:&#123;</span><br><span class="line">                    <span class="string">'MAX_ENTRIES'</span>: <span class="number">300</span>,                                       <span class="comment"># 最大缓存个数（默认300）</span></span><br><span class="line">                    <span class="string">'CULL_FREQUENCY'</span>: <span class="number">3</span>,                                      <span class="comment"># 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）</span></span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">'KEY_PREFIX'</span>: <span class="string">''</span>,                                             <span class="comment"># 缓存key的前缀（默认空）</span></span><br><span class="line">                <span class="string">'VERSION'</span>: <span class="number">1</span>,                                                 <span class="comment"># 缓存key的版本（默认1）</span></span><br><span class="line">                <span class="string">'KEY_FUNCTION'</span> 函数名                                          <span class="comment"># 生成key的函数（默认函数会生成为：【前缀:版本:key】）</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 自定义key</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">default_key_func</span><span class="params">(key, key_prefix, version)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        Default function to generate keys.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Constructs the key used by all other methods. By default it prepends</span></span><br><span class="line"><span class="string">        the `key_prefix'. KEY_FUNCTION can be used to specify an alternate</span></span><br><span class="line"><span class="string">        function with custom key making behavior.</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'%s:%s:%s'</span> % (key_prefix, version, key)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_key_func</span><span class="params">(key_func)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        Function to decide which key function to use.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Defaults to ``default_key_func``.</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> key_func <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">if</span> callable(key_func):</span><br><span class="line">                <span class="keyword">return</span> key_func</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">return</span> import_string(key_func)</span><br><span class="line">        <span class="keyword">return</span> default_key_func</span><br></pre></td></tr></table></figure>
+
+<p><strong>b. 内存(django默认配置)</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 此缓存将内容保存至内存的变量中</span></span><br><span class="line">    <span class="comment"># 配置：</span></span><br><span class="line">        CACHES = &#123;</span><br><span class="line">            <span class="string">'default'</span>: &#123;</span><br><span class="line">                <span class="string">'BACKEND'</span>: <span class="string">'django.core.cache.backends.locmem.LocMemCache'</span>,</span><br><span class="line">                <span class="string">'LOCATION'</span>: <span class="string">'unique-snowflake'</span>,                               <span class="comment">#这是一个唯一标示，写啥都行</span></span><br><span class="line"></span><br><span class="line">                <span class="string">'TIMEOUT'</span>: <span class="number">300</span>,                                               <span class="comment"># 缓存超时时间（默认300，None表示永不过期，0表示立即过期）</span></span><br><span class="line">                <span class="string">'OPTIONS'</span>:&#123;</span><br><span class="line">                    <span class="string">'MAX_ENTRIES'</span>: <span class="number">300</span>,                                       <span class="comment"># 最大缓存个数（默认300）</span></span><br><span class="line">                    <span class="string">'CULL_FREQUENCY'</span>: <span class="number">3</span>,                                      <span class="comment"># 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）</span></span><br><span class="line">                &#125;,</span><br><span class="line"></span><br><span class="line">        &#125; &#125; </span><br><span class="line"></span><br><span class="line"><span class="comment"># 注：其他配置同开发调试版本</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>c. 文件</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 此缓存将内容保存至文件，比如已经经过模版渲染完之后的html文件内容，如果缓存到文件中，以后就不需要再去进行模版渲染了，直接拿缓存中的要快一些</span></span><br><span class="line"><span class="comment"># settings配置文件中写上以下配置：</span></span><br><span class="line"></span><br><span class="line">    CACHES = &#123;</span><br><span class="line">        <span class="string">'default'</span>: &#123;</span><br><span class="line">            <span class="string">'BACKEND'</span>: <span class="string">'django.core.cache.backends.filebased.FileBasedCache'</span>,</span><br><span class="line">            <span class="string">'LOCATION'</span>: <span class="string">'/var/tmp/django_cache'</span>,  ** <span class="comment"># 缓存文件存放路径</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment"># 注：其他配置同开发调试版本</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>d. 数据库</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># 此缓存将内容保存至数据库</span><br><span class="line"></span><br><span class="line"># 配置：</span><br><span class="line">       CACHES = &#123;</span><br><span class="line">           &apos;default&apos;: &#123;</span><br><span class="line">               &apos;BACKEND&apos;: &apos;django.core.cache.backends.db.DatabaseCache&apos;,</span><br><span class="line">               &apos;LOCATION&apos;: &apos;my_cache_table&apos;, # 数据库表</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    # 注：执行创建表命令 python manage.py createcachetable,数据库中会自动生成名字为my_cache_table的表作为缓存表</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">注意：如果我们自己手动创建这个缓存表的时候，数据库表的三个字段是必须要有的：看下面的表，并且不需要制定上面的createcachetable指令就可以使用。</span><br><span class="line"></span><br><span class="line">from django.db import models</span><br><span class="line"></span><br><span class="line"># Create your models here.</span><br><span class="line"></span><br><span class="line">class CacheTalbe(models.Model):</span><br><span class="line"></span><br><span class="line">    cache_key = models.CharField(max_length=2000)</span><br><span class="line">    value = models.CharField(max_length=2000,null=True)</span><br><span class="line">    expires = models.DateTimeField(null=True)</span><br></pre></td></tr></table></figure>
+
+<p><strong>e. Memcache缓存（python-memcached模块）</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 此缓存使用python-memcached模块连接memcache</span></span><br><span class="line"></span><br><span class="line">    CACHES = &#123;</span><br><span class="line">        <span class="string">'default'</span>: &#123;</span><br><span class="line">            <span class="string">'BACKEND'</span>: <span class="string">'django.core.cache.backends.memcached.MemcachedCache'</span>,</span><br><span class="line">            <span class="string">'LOCATION'</span>: <span class="string">'127.0.0.1:11211'</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    CACHES = &#123;</span><br><span class="line">        <span class="string">'default'</span>: &#123;</span><br><span class="line">            <span class="string">'BACKEND'</span>: <span class="string">'django.core.cache.backends.memcached.MemcachedCache'</span>,</span><br><span class="line">            <span class="string">'LOCATION'</span>: <span class="string">'unix:/tmp/memcached.sock'</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;   </span><br><span class="line"></span><br><span class="line">    CACHES = &#123;</span><br><span class="line">        <span class="string">'default'</span>: &#123;</span><br><span class="line">            <span class="string">'BACKEND'</span>: <span class="string">'django.core.cache.backends.memcached.MemcachedCache'</span>,</span><br><span class="line">            <span class="string">'LOCATION'</span>: [</span><br><span class="line">                <span class="string">'172.19.26.240:11211'</span>,</span><br><span class="line">                <span class="string">'172.19.26.242:11211'</span>,</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>f. Memcache缓存（pylibmc模块）</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 此缓存使用pylibmc模块连接memcache</span></span><br><span class="line"></span><br><span class="line">CACHES = &#123;</span><br><span class="line">    <span class="string">'default'</span>: &#123;</span><br><span class="line">        <span class="string">'BACKEND'</span>: <span class="string">'django.core.cache.backends.memcached.PyLibMCCache'</span>,</span><br><span class="line">        <span class="string">'LOCATION'</span>: <span class="string">'127.0.0.1:11211'</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CACHES = &#123;</span><br><span class="line">    <span class="string">'default'</span>: &#123;</span><br><span class="line">        <span class="string">'BACKEND'</span>: <span class="string">'django.core.cache.backends.memcached.PyLibMCCache'</span>,</span><br><span class="line">        <span class="string">'LOCATION'</span>: <span class="string">'/tmp/memcached.sock'</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;   </span><br><span class="line"></span><br><span class="line">CACHES = &#123;</span><br><span class="line">    <span class="string">'default'</span>: &#123;</span><br><span class="line">        <span class="string">'BACKEND'</span>: <span class="string">'django.core.cache.backends.memcached.PyLibMCCache'</span>,</span><br><span class="line">        <span class="string">'LOCATION'</span>: [</span><br><span class="line">            <span class="string">'172.19.26.240:11211'</span>,</span><br><span class="line">            <span class="string">'172.19.26.242:11211'</span>,</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-应用"><a href="#2-应用" class="headerlink" title="2. 应用"></a>2. 应用</h4><p>a. 全站使用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">使用中间件，经过一系列的认证等操作，如果内容在缓存中存在，则使用FetchFromCacheMiddleware获取内容并返回给用户，当返回给用户之前，判断缓存中是否已经存在，如果不存在则UpdateCacheMiddleware会将缓存保存至缓存，从而实现全站缓存</span><br><span class="line">缓存多长时间等配置默认是按照你上面的配置部分来的</span><br><span class="line"> MIDDLEWARE = [</span><br><span class="line">     <span class="string">'django.middleware.cache.UpdateCacheMiddleware'</span>, <span class="comment">#中间件第一个</span></span><br><span class="line">     <span class="comment"># 其他中间件...</span></span><br><span class="line">     <span class="string">'django.middleware.cache.FetchFromCacheMiddleware'</span>, <span class="comment">#中间件最后一个</span></span><br><span class="line"> ]</span><br><span class="line"></span><br><span class="line"> CACHE_MIDDLEWARE_ALIAS = <span class="string">""</span>   用于存储的缓存别名。</span><br><span class="line"> CACHE_MIDDLEWARE_SECONDS = <span class="string">""</span>  应该缓存每个页面的秒数</span><br><span class="line"> CACHE_MIDDLEWARE_KEY_PREFIX = <span class="string">""</span> 如果使用同一django安装跨多个站点共享缓存，请将其设置为站点名称或此django实例唯一的其他字符串，以防止密钥冲突。如果你不在乎，就用空字符串</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2018.cnblogs.com/blog/988061/201910/988061-20191031155724135-1774751752.png" alt="img"></p>
+<h4 id="3-django默认配置"><a href="#3-django默认配置" class="headerlink" title="3. django默认配置"></a>3. django默认配置</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf <span class="keyword">import</span> global_settings <span class="comment">#在这个配置文件中我们能够看到</span></span><br><span class="line"><span class="comment">#以下配置是django缓存的默认配置，如果我们自己没有进行配置，那么下面的使用，默认会使用我们的默认配置，也就是本地内存</span></span><br><span class="line"><span class="comment"># The cache backends to use.</span></span><br><span class="line">CACHES = &#123;</span><br><span class="line">    <span class="string">'default'</span>: &#123;</span><br><span class="line">        <span class="string">'BACKEND'</span>: <span class="string">'django.core.cache.backends.locmem.LocMemCache'</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">CACHE_MIDDLEWARE_KEY_PREFIX = <span class="string">''</span></span><br><span class="line">CACHE_MIDDLEWARE_SECONDS = <span class="number">600</span></span><br><span class="line">CACHE_MIDDLEWARE_ALIAS = <span class="string">'default'</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>b.  单独视图缓存（先看这个）</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">方式一：</span><br><span class="line"><span class="keyword">from</span> django.views.decorators.cache <span class="keyword">import</span> cache_page</span><br><span class="line">    <span class="keyword">import</span> time</span><br><span class="line"><span class="meta">    @cache_page(5)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">my_view</span><span class="params">(request)</span>:</span></span><br><span class="line">        tm = time.time()</span><br><span class="line">        ...</span><br><span class="line">        all_book = models.Book.objects.all()</span><br><span class="line">        print(all_book) <span class="comment">#也是5秒之后打印一次，因为5秒内都是从缓存中拿的，没有执行我们的视图函数，所有没有去数据库中取，注意，对实时性数据要求很高的，不要做缓存</span></span><br><span class="line">        <span class="keyword">return</span> render(request,<span class="string">'index.html'</span>,&#123;<span class="string">'tm'</span>:tm &#125;) <span class="comment"># 当我们刷新页面的时候，你会发现tm在5秒之后才会发生变化</span></span><br><span class="line"></span><br><span class="line">方式二：</span><br><span class="line"><span class="keyword">from</span> django.views.decorators.cache <span class="keyword">import</span> cache_page</span><br><span class="line"></span><br><span class="line">        urlpatterns = [</span><br><span class="line">            url(<span class="string">r'^foo/([0-9]&#123;1,2&#125;)/$'</span>, cache_page(<span class="number">60</span> * <span class="number">15</span>)(my_view)), <span class="comment">#装饰器原始用法</span></span><br><span class="line">        ]</span><br></pre></td></tr></table></figure>
+
+<p><strong>c. 局部模板使用</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">a. 引入TemplateTag</span><br><span class="line"></span><br><span class="line">    &#123;% load cache %&#125;</span><br><span class="line"></span><br><span class="line">b. 使用缓存</span><br><span class="line"></span><br><span class="line">	&#123;% cache 5 缓存key %&#125; # 5秒缓存</span><br><span class="line">		缓存内容</span><br><span class="line">	&#123;% endcache %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>局部使用示例</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Title<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>哈哈哈<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>&#123;&#123; tm &#125;&#125;<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#123;% load cache %&#125;</span><br><span class="line">&#123;% cache 5 'c1' %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>&#123;&#123; tm &#125;&#125;<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line">&#123;% endcache %&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="4-django-redis配置缓存"><a href="#4-django-redis配置缓存" class="headerlink" title="4.  django-redis配置缓存"></a>4.  django-redis配置缓存</h4><p>settings.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CACHES = &#123;</span><br><span class="line">    <span class="string">"default"</span>: &#123;</span><br><span class="line">        <span class="string">"BACKEND"</span>: <span class="string">"django_redis.cache.RedisCache"</span>,</span><br><span class="line">        <span class="string">"LOCATION"</span>: <span class="string">"redis://192.168.232.129:6379"</span>,</span><br><span class="line">        <span class="string">"OPTIONS"</span>: &#123;</span><br><span class="line">            <span class="string">"CLIENT_CLASS"</span>: <span class="string">"django_redis.client.DefaultClient"</span>,</span><br><span class="line">            <span class="comment"># "PASSWORD": "root123456",</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>redis的持久化存储，请移步<a href="https://by517840374.github.io/2019/12/02/redis%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8--AOF+rdb/" target="_blank" rel="noopener">redis AOF+RDE持久化处理</a></p>
+<h3 id="三、django操作读写分离"><a href="#三、django操作读写分离" class="headerlink" title="三、django操作读写分离"></a>三、django操作读写分离</h3><blockquote>
+<p>当然，读写分离的前提是数据库实现了主从复制</p>
+</blockquote>
+<h4 id="1-首先配置多个数据库，在settings配置文件中配置以下内容"><a href="#1-首先配置多个数据库，在settings配置文件中配置以下内容" class="headerlink" title="1. 首先配置多个数据库，在settings配置文件中配置以下内容"></a>1. 首先配置多个数据库，在settings配置文件中配置以下内容</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="string">'default'</span>: &#123; <span class="comment">#默认数据库，配置多个mysql数据也是ok的，混用数据库也是ok的</span></span><br><span class="line">        <span class="string">'ENGINE'</span>: <span class="string">'django.db.backends.sqlite3'</span>,</span><br><span class="line">        <span class="string">'NAME'</span>: os.path.join(BASE_DIR, <span class="string">'db.sqlite3'</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'db2'</span>: &#123; <span class="comment">#配置的第二个数据库，注意数据库名字不能相同</span></span><br><span class="line">        <span class="string">'ENGINE'</span>: <span class="string">'django.db.backends.sqlite3'</span>,</span><br><span class="line">        <span class="string">'NAME'</span>: os.path.join(BASE_DIR, <span class="string">'db2.sqlite3'</span>),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-执行数据库同步指令，将我们的表结构生成到db2这个数据库中"><a href="#2-执行数据库同步指令，将我们的表结构生成到db2这个数据库中" class="headerlink" title="2. 执行数据库同步指令，将我们的表结构生成到db2这个数据库中"></a>2. 执行数据库同步指令，将我们的表结构生成到db2这个数据库中</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python manage.py migrate --database db2（库名）</span><br></pre></td></tr></table></figure>
+
+<p>执行完上面的指令之后，你就会发现，db2这个库里面就有了我们的表</p>
+<h4 id="3-看看读写分离的情况下，django怎么玩"><a href="#3-看看读写分离的情况下，django怎么玩" class="headerlink" title="3.看看读写分离的情况下，django怎么玩"></a>3.看看读写分离的情况下，django怎么玩</h4><p>a. 手动写，views.py中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dbtest</span><span class="params">(request)</span>:</span></span><br><span class="line">    data = []</span><br><span class="line">    <span class="comment"># 向db2数据库中写入数据</span></span><br><span class="line">    <span class="comment"># models.Class.objects.using('db2').create(name='xx')</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 从db1中读取数据</span></span><br><span class="line">    data = models.Class.objects.using(<span class="string">'default'</span>).all()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 更新时</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> data:</span><br><span class="line">        i.name = <span class="string">'xxxxxx'</span></span><br><span class="line">        i.save(using=<span class="string">'db2'</span>) <span class="comment">#更新时指定数据库</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render(request,<span class="string">'dbtest.html'</span>,&#123;<span class="string">'data'</span>:data&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>b. 配置自动</p>
+<blockquote>
+<p>在应用文件夹中创建一个py文件，名字随意，比如叫做router.py文件，写上下面的内容：</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Router</span>:</span></span><br><span class="line">    <span class="comment"># 读操作用default库，就return这个库名字符串</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">db_for_read</span><span class="params">(self,model,**kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'default'</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">db_for_write</span><span class="params">(self,model,**kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'db2'</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>然后在settings配置文件中做下面的配置</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DATABASE_ROUTERS = [<span class="string">'app01.router.Router'</span>,] <span class="comment">#写上面这个类的路径，我的是在app01应用文件夹下面的router.py文件中了</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>那么在逻辑的views.py文件中写的时候，就不需要using指定数据库了</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dbtest</span><span class="params">(request)</span>:</span></span><br><span class="line">    data = []</span><br><span class="line">    <span class="comment"># 向db2数据库中写入数据</span></span><br><span class="line">    models.Class.objects.create(name=<span class="string">'xx2'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 从db1中读取数据</span></span><br><span class="line">    data = models.Class.objects.all()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render(request,<span class="string">'dbtest.html'</span>,&#123;<span class="string">'data'</span>:data&#125;)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>那么如果是一主多从的时候，也就是从多个数据库中读取的时候：</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Router</span>:</span></span><br><span class="line">    <span class="comment"># 读操作用default库，就return这个库名字符串</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">db_for_read</span><span class="params">(self,model,**kwargs)</span>:</span></span><br><span class="line">        print(<span class="number">11111</span>)</span><br><span class="line">        print(model._meta.app_label)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'default'</span></span><br><span class="line">        <span class="comment"># return random.choice(['db1','db2','db3']) #多个库读的时候，可以简单的写个随机选择</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">db_for_write</span><span class="params">(self,model,**kwargs)</span>:</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'db2'</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>根据不同的应用来选择不同的库进行读取</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Router</span>:</span></span><br><span class="line">    <span class="comment"># 读操作用default库，就return这个库名字符串</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">db_for_read</span><span class="params">(self,model,**kwargs)</span>:</span></span><br><span class="line">        print(model)</span><br><span class="line">        print(dir(model))<span class="comment"># 其中有个_meta属性很有用</span></span><br><span class="line">        a = model._meta.app_label <span class="comment">#获取当前model对象所在的应用名称</span></span><br><span class="line">　　　　 m = model._meta.model_name  获取当前操作的model对象的表名，也可以根据表名来进行多数据库读的分配</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 可以根据应用选择不用的库来进行读取</span></span><br><span class="line">        <span class="keyword">if</span> a == <span class="string">'app01'</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'db1'</span></span><br><span class="line">        <span class="keyword">elif</span> a == <span class="string">'app02'</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'db2'</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'default'</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">db_for_write</span><span class="params">(self,model,**kwargs)</span>:</span></span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -189,368 +335,55 @@
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/12/26/mysql串讲总结/" class="archive-article-date">
-  	<time datetime="2019-12-26T07:04:18.697Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-26</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/12/26/mysql串讲总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+        
+        
+    </div>
+</aside>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/12/18/干货链接/" class="archive-article-date">
-  	<time datetime="2019-12-18T14:00:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-18</time>
-</a>
-        </div>
-    	 
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/12/18/干货链接/">干货链接/收藏夹</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">收藏夹</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/12/15/nginx+uwsig+crm+mysql+virtualenv+supervisor/" class="archive-article-date">
-  	<time datetime="2019-12-15T13:01:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/12/15/nginx+uwsig+crm+mysql+virtualenv+supervisor/">nginx+uwsig+crm+mysql+virtualenv+supervisor</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">nginx</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/12/15/saltstack服务器批量操作/" class="archive-article-date">
-  	<time datetime="2019-12-15T13:01:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/12/15/saltstack服务器批量操作/">saltstack日常学习</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">saltstack</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/12/12/RPC之远程过程调用/" class="archive-article-date">
-  	<time datetime="2019-12-12T13:01:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-12</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/12/12/RPC之远程过程调用/">rpc远程调用</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">rpc</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/12/12/redis主从复制、哨兵和集群/" class="archive-article-date">
-  	<time datetime="2019-12-12T13:01:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-12</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/12/12/redis主从复制、哨兵和集群/">redis主从复制、哨兵和集群</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/12/12/消息队列之rabbitmq学习使用/" class="archive-article-date">
-  	<time datetime="2019-12-12T13:00:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-12</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/12/12/消息队列之rabbitmq学习使用/">消息队列之rabbitmq学习使用及消息持久化</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">rebbitmq</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/12/07/docker/" class="archive-article-date">
-  	<time datetime="2019-12-07T13:00:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-07</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/12/07/docker/">docker全部知识点总结</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">docker</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/12/02/redis持久化存储--AOF+rdb/" class="archive-article-date">
-  	<time datetime="2019-12-02T15:22:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-02</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/12/02/redis持久化存储--AOF+rdb/">redis持久化存储之AOF+RDB</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -580,8 +413,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
